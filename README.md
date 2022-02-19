@@ -10,10 +10,6 @@ pip install -e ./CLIP
 pip install -e ./guided-diffusion
 pip install lpips datetime timm
 apt install imagemagick
-```
-
-##SuperRes setup (currently crashing if enabled in dd.py)
-```
 git clone https://github.com/CompVis/latent-diffusion.git
 git clone https://github.com/CompVis/taming-transformers
 pip install -e ./taming-transformers
@@ -29,6 +25,7 @@ The main ones (and at what line of code) are:
 batch_name on 1701
 steps on 1702
 width_height on 1703
+sharpen_preset on line 2004 NEEDS TO BE "OFF" (for now)
 text_prompts on line 2050 or so
 n_batches on line 2066 or so
 ```
