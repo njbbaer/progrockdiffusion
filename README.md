@@ -2,7 +2,7 @@
 A command line version of Disco Diffusion
 
 # Setup
-Make sure you're in the direction you plan to run it from.
+Make sure you're in the directory you plan to run it from.
 ```
 git clone https://github.com/crowsonkb/guided-diffusion
 git clone https://github.com/assafshocher/ResizeRight.git
