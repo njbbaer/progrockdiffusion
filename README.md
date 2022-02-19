@@ -29,6 +29,11 @@ sharpen_preset on line 2004 NEEDS TO BE "OFF" (for now)
 text_prompts on line 2050 or so
 n_batches on line 2066 or so
 ```
+
+Then simply run it:
+```
+python3 dd.py
+```
 # Notes
 
 - Currently Superres Sampling doesn't work, it will crash.
