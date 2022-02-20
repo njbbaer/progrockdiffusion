@@ -657,7 +657,7 @@ def do_run():
             batchBar.n = i
             batchBar.refresh()
           print('')
-          display.display(image_display)
+          #display.display(image_display)
           gc.collect()
           torch.cuda.empty_cache()
           cur_t = diffusion.num_timesteps - skip_steps - 1
@@ -726,7 +726,7 @@ def do_run():
                       if j % args.display_rate == 0 or cur_t == -1:
                         image.save('progress.png')
                         display.clear_output(wait=True)
-                        display.display(display.Image('progress.png'))
+                        #display.display(display.Image('progress.png'))
                       if args.steps_per_checkpoint is not None:
                         if j % args.steps_per_checkpoint == 0 and j > 0:
                           if args.intermediates_in_subfolder is True:
@@ -1432,10 +1432,10 @@ def do_superres(img, filepath):
   if args.sharpen_preset == 'Fast':
       sr_diffusion_steps = "100"
       sr_pre_downsample = '1/2'
-  if args.sharpen_preset == 'Slow':
+  if args.sharpen_preset == ' ':
       sr_diffusion_steps = "25"
       sr_pre_downsample = 'None'
-  if args.sharpen_preset == 'Very Slow':
+  if args.sharpen_preset == 'Very  ':
       sr_diffusion_steps = "100"
       sr_pre_downsample = 'None'
 
@@ -1502,7 +1502,7 @@ def do_superres(img, filepath):
     # print(f'Downsampling from [{width}, {height}] to Original Size [{width_og}, {height_og}]')
     a = a.resize((width_og, height_og), aliasing)
 
-  display.display(a)
+  #display.display(a)
   a.save(filepath)
   return
   print(f'Processing finished!')
@@ -2001,7 +2001,7 @@ if intermediate_saves and intermediates_in_subfolder is True:
 
 #@markdown ####**SuperRes Sharpening:**
 #@markdown *Sharpen each image using latent-diffusion. Does not run in animation mode. `keep_unsharp` will save both versions.*
-sharpen_preset = 'Off' #@param ['Off', 'Faster', 'Fast', 'Slow', 'Very Slow']
+sharpen_preset = 'Off' #@param ['Off', 'Faster', 'Fast', ' ', 'Very  ']
 keep_unsharp = False #@param{type: 'boolean'}
 
 if sharpen_preset != 'Off' and keep_unsharp is True:
@@ -2269,7 +2269,7 @@ if skip_video_for_run_all == False:
       '-crf',
       '17',
       '-preset',
-      'veryslow',
+      'very ',
       filepath
   ]
 
