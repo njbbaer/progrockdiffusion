@@ -1432,10 +1432,10 @@ def do_superres(img, filepath):
   if args.sharpen_preset == 'Fast':
       sr_diffusion_steps = "100"
       sr_pre_downsample = '1/2'
-  if args.sharpen_preset == ' ':
+  if args.sharpen_preset == 'Slow':
       sr_diffusion_steps = "25"
       sr_pre_downsample = 'None'
-  if args.sharpen_preset == 'Very  ':
+  if args.sharpen_preset == 'Very Slow':
       sr_diffusion_steps = "100"
       sr_pre_downsample = 'None'
 
@@ -2001,7 +2001,7 @@ if intermediate_saves and intermediates_in_subfolder is True:
 
 #@markdown ####**SuperRes Sharpening:**
 #@markdown *Sharpen each image using latent-diffusion. Does not run in animation mode. `keep_unsharp` will save both versions.*
-sharpen_preset = 'Off' #@param ['Off', 'Faster', 'Fast', ' ', 'Very  ']
+sharpen_preset = 'Off' #@param ['Off', 'Faster', 'Fast', 'Slow', 'Very Slow']
 keep_unsharp = False #@param{type: 'boolean'}
 
 if sharpen_preset != 'Off' and keep_unsharp is True:
