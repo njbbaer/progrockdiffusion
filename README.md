@@ -37,9 +37,9 @@ python3 dd.py
 # Notes
 
 - Currently Superres Sampling doesn't work, it will crash.
-- Since you can't see your progress (short of opening progress.png manually), you might as well set "display_rate" on line 2063 to the same number as steps on 1702
 
 # TODO
 
 - Get all the main parameters from either a config file or command line (command line seems like too much)
-- The code already saves a settings.txt file based on the internal parameters, so perhaps there's a way to read that back in and use its values?
+- The code already saves a settings.txt file in the output directory with each run, based on the internal parameters, so perhaps there's a way to read that back in and use its values? At the very least, a similar file in the root directory.
+- The SLIP models are currently failing due to a variable not being defined.

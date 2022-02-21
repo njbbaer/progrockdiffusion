@@ -799,6 +799,7 @@ def save_settings():
     'diffusion_steps': diffusion_steps,
     'ViTB32': ViTB32,
     'ViTB16': ViTB16,
+    'ViTL14': ViTL14,
     'RN101': RN101,
     'RN50': RN50,
     'RN50x4': RN50x4,
@@ -1518,6 +1519,7 @@ diffusion_steps = 1000 # param {type: 'number'}
 use_checkpoint = True #@param {type: 'boolean'}
 ViTB32 = True #@param{type:"boolean"}
 ViTB16 = True #@param{type:"boolean"}
+ViTL14 = False #@param{type:"boolean"}
 RN101 = True #@param{type:"boolean"}
 RN50 = True #@param{type:"boolean"}
 RN50x4 = True #@param{type:"boolean"}
@@ -1657,6 +1659,7 @@ secondary_model.eval().requires_grad_(False).to(device)
 clip_models = []
 if ViTB32 is True: clip_models.append(clip.load('ViT-B/32', jit=False)[0].eval().requires_grad_(False).to(device))
 if ViTB16 is True: clip_models.append(clip.load('ViT-B/16', jit=False)[0].eval().requires_grad_(False).to(device) )
+if ViTL14 is True: clip_models.append(clip.load('ViT-L/14', jit=False)[0].eval().requires_grad_(False).to(device) )
 if RN50 is True: clip_models.append(clip.load('RN50', jit=False)[0].eval().requires_grad_(False).to(device))
 if RN50x4 is True: clip_models.append(clip.load('RN50x4', jit=False)[0].eval().requires_grad_(False).to(device))
 if RN50x16 is True: clip_models.append(clip.load('RN50x16', jit=False)[0].eval().requires_grad_(False).to(device))
