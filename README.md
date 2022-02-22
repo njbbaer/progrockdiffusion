@@ -33,7 +33,7 @@ optional arguments:
   -p PROMPT, --prompt PROMPT
                         Override the prompt
 
-Useage examples:
+Usage examples:
 
 Use the 'Default' output directory and get settings from settings.json:
  python3 dd.py
