@@ -23,8 +23,10 @@ pip install ipywidgets omegaconf>=2.0.0 pytorch-lightning>=1.0.8 torch-fidelity 
 usage: ProgRockDiffusion [-h] [-s SETTINGS] [-o OUTPUT] [-p PROMPT]
 
 Generate images from text prompts.
+By default, the supplied settings.json file will be used.
+You can edit that, and/or use the options below to fine tune:
 
-optional arguments:
+Optional arguments:
   -h, --help            show this help message and exit
   -s SETTINGS, --settings SETTINGS
                         A settings JSON file to use, best to put in quotes
@@ -35,18 +37,19 @@ optional arguments:
 
 Usage examples:
 
-Use the 'Default' output directory and get settings from settings.json:
+To use the Default output directory and settings from settings.json:
  python3 dd.py
 
-Use your own settings.json (note that putting it in quotes can help parse errors):
+To use your own settings.json file (note that putting it in quotes can help parse errors):
  python3 dd.py -s "some_directory/mysettings.json"
 
-Use the 'Default' output directory and settings, but override the output name and prompt:
+To quickly just override the output directory name and the prompt:
  python3 dd.py -p "A cool image of the author of this program" -o Coolguy
 ```
 # Notes
 
 - Currently Superres Sampling doesn't work, it will crash.
+- When using multiple prompts only the last prompt is used.
 
 # TODO
 
