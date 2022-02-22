@@ -20,7 +20,7 @@ pip install ipywidgets omegaconf>=2.0.0 pytorch-lightning>=1.0.8 torch-fidelity 
 # Use
 
 ```
-usage: ProgRockDiffusion [-h] [-s SETTINGS] [-o OUTPUT] [-p PROMPT]
+usage: python3 dd.py [-h] [-s SETTINGS] [-o OUTPUT] [-p PROMPT]
 
 Generate images from text prompts.
 By default, the supplied settings.json file will be used.
