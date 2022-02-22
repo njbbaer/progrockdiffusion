@@ -143,7 +143,7 @@ if torch.cuda.get_device_capability(device) == (8,0): ## A100 fix thanks to Emad
 
 # Command Line parse
 import argparse
-example_text = '''Useage examples:
+example_text = '''Usage examples:
 
 Use the 'Default' output directory and get settings from settings.json:
  python3 dd.py
