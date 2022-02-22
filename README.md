@@ -19,21 +19,30 @@ pip install ipywidgets omegaconf>=2.0.0 pytorch-lightning>=1.0.8 torch-fidelity 
 
 # Use
 
-For now, edit dd.py and find the parameters you want to change.
+```
+usage: ProgRockDiffusion [-h] [-s SETTINGS] [-o OUTPUT] [-p PROMPT]
 
-The main ones (and at what line of code) are:
-```
-batch_name on 1701
-steps on 1702
-width_height on 1703
-sharpen_preset on line 2004 NEEDS TO BE "OFF" (for now)
-text_prompts on line 2050 or so
-n_batches on line 2066 or so
-```
+Generate images from text prompts.
 
-Then simply run it:
-```
-python3 dd.py
+optional arguments:
+  -h, --help            show this help message and exit
+  -s SETTINGS, --settings SETTINGS
+                        A settings JSON file to use, best to put in quotes
+  -o OUTPUT, --output OUTPUT
+                        What output directory to use within images_out
+  -p PROMPT, --prompt PROMPT
+                        Override the prompt
+
+Useage examples:
+
+Use the 'Default' output directory and get settings from settings.json:
+ python3 dd.py
+
+Use your own settings.json (note that putting it in quotes can help parse errors):
+ python3 dd.py -s "some_directory/mysettings.json"
+
+Use the 'Default' output directory and settings, but override the output name and prompt:
+ python3 dd.py -p "A cool image of the author of this program" -o Coolguy
 ```
 # Notes
 
@@ -41,6 +50,5 @@ python3 dd.py
 
 # TODO
 
-- Get all the main parameters from either a config file or command line (command line seems like too much)
-- The code already saves a settings.txt file in the output directory with each run, based on the internal parameters, so perhaps there's a way to read that back in and use its values? At the very least, a similar file in the root directory.
 - The SLIP models are currently failing due to a variable not being defined.
+- Provide a section in this readme that goes over all the settings in settings.json and what they do, since we don't have the colab notebook to show those hints
