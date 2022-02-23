@@ -2,7 +2,7 @@
 A command line version of Disco Diffusion
 
 # Hardware prerequisites
-An Nvidia GPU capable of running CUDA-based softare. 8gb is probablt the minimum amount of GPU memory.
+An Nvidia GPU capable of running CUDA-based softare. 8gb is probably the minimum amount of GPU memory.
 
 This author has an RTX 3080 with 10gb and it runs fairly well, but some advanced features are not possible with "only" 10gb.
 
