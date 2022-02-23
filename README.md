@@ -1,20 +1,72 @@
 # progrockdiffusion
 A command line version of Disco Diffusion
 
-# Setup
-Make sure you're in the directory you plan to run it from.
+# Hardware prerequisites
+An Nvidia GPU capable of running CUDA-based softare. 8gb is probablt the minimum amount of GPU memory.
+
+This author has an RTX 3080 with 10gb and it runs fairly well, but some advanced features are not possible with "only" 10gb.
+
+# Software prerequisties
+Ubuntu 20.04 (A docker environment, VM, or Windows Subsystem for Linux will work provided it can access your GPU).
+
+# First time setup
+
+CUDA 11.4
+
+## Update Ubuntu 20.04 packages
+```
+sudo apt update
+sudo apt upgrade -y
+```
+
+## Download Anaconda (python env manager) installer
+```
+wget https://repo.anaconda.com/archive/Anaconda3-2021.11-Linux-x86_64.sh
+```
+
+## Install Anaconda
+```
+bash Anaconda3-2021.11-Linux-x86_64.sh 
+respond 'yes' to accept license terms and provide install dir when prompted
+respond 'yes' to run conda initialization
+```
+
+## Reboot for changes to take effect
+```
+sudo reboot
+```
+
+## Create prog rock diffusion env
+```
+conda create --name progrockdiffusion python=3.7
+conda activate progrockdiffusion
+```
+
+## Clone the prog rock diffusion repo
+```
+git clone git@github.com:lowfuel/progrockdiffusion.git
+cd progrockdiffusion
+```
+
+## Install the required libraries and tools
 ```
 git clone https://github.com/crowsonkb/guided-diffusion
 git clone https://github.com/openai/CLIP.git
 git clone https://github.com/assafshocher/ResizeRight.git
-pip install -e ./CLIP
-pip install -e ./guided-diffusion
-pip install lpips datetime timm
-apt install imagemagick
+git clone https://github.com/facebookresearch/SLIP.git
 git clone https://github.com/CompVis/latent-diffusion.git
 git clone https://github.com/CompVis/taming-transformers
+pip install -e ./CLIP
+pip install -e ./guided-diffusion
 pip install -e ./taming-transformers
-pip install ipywidgets omegaconf>=2.0.0 pytorch-lightning>=1.0.8 torch-fidelity einops wandb
+pip install lpips datetime timm
+pip install https://download.pytorch.org/whl/cu111/torch-1.10.0%2Bcu111-cp37-cp37m-linux_x86_64.whl
+pip install https://download.pytorch.org/whl/cu111/torchaudio-0.10.0%2Bcu111-cp37-cp37m-linux_x86_64.whl
+pip install https://download.pytorch.org/whl/cu111/torchvision-0.11.1%2Bcu111-cp37-cp37m-linux_x86_64.whl
+pip install ipywidgets omegaconf pytorch_lightning einops
+pip install matplotlib pandas
+conda install opencv
+apt install imagemagick
 ```
 
 # Use
