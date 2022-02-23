@@ -9,9 +9,9 @@ This author has an RTX 3080 with 10gb and it runs fairly well, but some advanced
 # Software prerequisties
 Ubuntu 20.04 (A docker environment, VM, or Windows Subsystem for Linux will work provided it can access your GPU).
 
-# First time setup
-
 CUDA 11.4
+
+# First time setup
 
 ## Update Ubuntu 20.04 packages
 ```
