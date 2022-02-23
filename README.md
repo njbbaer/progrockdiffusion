@@ -19,28 +19,39 @@ pip install ipywidgets omegaconf>=2.0.0 pytorch-lightning>=1.0.8 torch-fidelity 
 
 # Use
 
-For now, edit dd.py and find the parameters you want to change.
+```
+usage: python3 dd.py [-h] [-s SETTINGS] [-o OUTPUT] [-p PROMPT]
 
-The main ones (and at what line of code) are:
-```
-batch_name on 1701
-steps on 1702
-width_height on 1703
-sharpen_preset on line 2004 NEEDS TO BE "OFF" (for now)
-text_prompts on line 2050 or so
-n_batches on line 2066 or so
-```
+Generate images from text prompts.
+By default, the supplied settings.json file will be used.
+You can edit that, and/or use the options below to fine tune:
 
-Then simply run it:
-```
-python3 dd.py
+Optional arguments:
+  -h, --help            show this help message and exit
+  -s SETTINGS, --settings SETTINGS
+                        A settings JSON file to use, best to put in quotes
+  -o OUTPUT, --output OUTPUT
+                        What output directory to use within images_out
+  -p PROMPT, --prompt PROMPT
+                        Override the prompt
+
+Usage examples:
+
+To use the Default output directory and settings from settings.json:
+ python3 dd.py
+
+To use your own settings.json file (note that putting it in quotes can help parse errors):
+ python3 dd.py -s "some_directory/mysettings.json"
+
+To quickly just override the output directory name and the prompt:
+ python3 dd.py -p "A cool image of the author of this program" -o Coolguy
 ```
 # Notes
 
 - Currently Superres Sampling doesn't work, it will crash.
+- When using multiple prompts only the last prompt is used.
 
 # TODO
 
-- Get all the main parameters from either a config file or command line (command line seems like too much)
-- The code already saves a settings.txt file in the output directory with each run, based on the internal parameters, so perhaps there's a way to read that back in and use its values? At the very least, a similar file in the root directory.
 - The SLIP models are currently failing due to a variable not being defined.
+- Provide a section in this readme that goes over all the settings in settings.json and what they do, since we don't have the colab notebook to show those hints

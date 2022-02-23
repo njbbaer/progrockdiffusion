@@ -141,6 +141,98 @@ if torch.cuda.get_device_capability(device) == (8,0): ## A100 fix thanks to Emad
   print('Disabling CUDNN for A100 gpu', file=sys.stderr)
   torch.backends.cudnn.enabled = False
 
+# Command Line parse
+import argparse
+example_text = '''Usage examples:
+
+Use the 'Default' output directory and get settings from settings.json:
+ python3 dd.py
+
+Use your own settings.json (note that putting it in quotes can help parse errors):
+ python3 dd.py -s "some_directory/mysettings.json"
+
+Use the 'Default' output directory and settings, but override the output name and prompt:
+ python3 dd.py -p "A cool image of the author of this program" -o Coolguy'''
+
+my_parser = argparse.ArgumentParser(prog='ProgRockDiffusion', description='Generate images from text prompts.', epilog=example_text, formatter_class=argparse.RawDescriptionHelpFormatter)
+my_parser.add_argument('-s', '--settings', action='store', required=False, default='settings.json', help='A settings JSON file to use, best to put in quotes')
+my_parser.add_argument('-o', '--output', action='store', required=False, help='What output directory to use within images_out')
+my_parser.add_argument('-p', '--prompt', action='append', required=False, help='Override the prompt')
+
+cl_args = my_parser.parse_args()
+
+# Load the JSON config file
+try:
+    with open(cl_args.settings,'r') as json_file:
+        settings_file = json.load(json_file)
+except Exception as e:
+    print('Failed to open or parse ' + cl_args.settings + ' - Check formatting.')
+    print(e)
+    quit()
+
+# Set all of the settings from the specified file
+batch_name = (settings_file['batch_name'])
+text_prompts = (settings_file['text_prompts'])
+image_prompts = (settings_file['image_prompts'])
+clip_guidance_scale = (settings_file['clip_guidance_scale'])
+tv_scale = (settings_file['tv_scale'])
+range_scale = (settings_file['range_scale'])
+sat_scale = (settings_file['sat_scale'])
+n_batches = (settings_file['n_batches'])
+display_rate = (settings_file['display_rate'])
+cutn_batches = (settings_file['cutn_batches'])
+max_frames = (settings_file['max_frames'])
+interp_spline = (settings_file['interp_spline'])
+init_image = (settings_file['init_image'])
+init_scale = (settings_file['init_scale'])
+skip_steps = (settings_file['skip_steps'])
+frames_scale = (settings_file['frames_scale'])
+frames_skip_steps = (settings_file['frames_skip_steps'])
+perlin_init = (settings_file['perlin_init'])
+perlin_mode = (settings_file['perlin_mode'])
+skip_augs = (settings_file['skip_augs'])
+randomize_class = (settings_file['randomize_class'])
+clip_denoised = (settings_file['clip_denoised'])
+clamp_grad = (settings_file['clamp_grad'])
+clamp_max = (settings_file['clamp_max'])
+set_seed = (settings_file['set_seed'])
+fuzzy_prompt = (settings_file['fuzzy_prompt'])
+rand_mag = (settings_file['rand_mag'])
+eta = (settings_file['eta'])
+width_height = [(settings_file['width']), (settings_file['height'])]
+diffusion_model = (settings_file['diffusion_model'])
+use_secondary_model = (settings_file['use_secondary_model'])
+steps = (settings_file['steps'])
+diffusion_steps = (settings_file['diffusion_steps'])
+ViTB32 = (settings_file['ViTB32'])
+ViTB16 = (settings_file['ViTB16'])
+ViTL14 = (settings_file['ViTL14'])
+RN101 = (settings_file['RN101'])
+RN50 = (settings_file['RN50'])
+RN50x4 = (settings_file['RN50x4'])
+RN50x16 = (settings_file['RN50x16'])
+cut_overview = (settings_file['cut_overview'])
+cut_innercut = (settings_file['cut_innercut'])
+cut_ic_pow = (settings_file['cut_ic_pow'])
+cut_icgray_p = (settings_file['cut_icgray_p'])
+key_frames = (settings_file['key_frames'])
+angle = (settings_file['angle'])
+zoom = (settings_file['zoom'])
+translation_x = (settings_file['translation_x'])
+translation_y = (settings_file['translation_y'])
+video_init_path = (settings_file['video_init_path'])
+extract_nth_frame = (settings_file['extract_nth_frame'])
+
+#Now override some depending on command line and maybe a special case
+if cl_args.output:
+    batch_name = cl_args.output
+    print(f'Setting Output dir to {batch_name}')
+
+if cl_args.prompt:
+    print(f'Loaded prompt was {text_prompts}')
+    text_prompts["0"] = cl_args.prompt
+    print(f'Setting initial prompt to {text_prompts}')
+
 #@title 2.2 Define necessary functions
 
 # https://gist.github.com/adefossez/0646dbe9ed4005480a2407c62aac8869
@@ -763,7 +855,14 @@ def do_run():
 
 def save_settings():
   setting_list = {
+    'batch_name': batch_name,
     'text_prompts': text_prompts,
+    'n_batches': n_batches,
+    'steps': steps,
+    'display_rate': display_rate,
+    'width': width_height[0],
+    'height': width_height[1],
+    'set_seed': seed,
     'image_prompts': image_prompts,
     'clip_guidance_scale': clip_guidance_scale,
     'tv_scale': tv_scale,
@@ -787,15 +886,11 @@ def save_settings():
     'clip_denoised': clip_denoised,
     'clamp_grad': clamp_grad,
     'clamp_max': clamp_max,
-    'seed': seed,
     'fuzzy_prompt': fuzzy_prompt,
     'rand_mag': rand_mag,
     'eta': eta,
-    'width': width_height[0],
-    'height': width_height[1],
     'diffusion_model': diffusion_model,
     'use_secondary_model': use_secondary_model,
-    'steps': steps,
     'diffusion_steps': diffusion_steps,
     'ViTB32': ViTB32,
     'ViTB16': ViTB16,
@@ -809,7 +904,6 @@ def save_settings():
     'cut_ic_pow': cut_ic_pow,
     'cut_icgray_p': str(cut_icgray_p),
     'key_frames': key_frames,
-    'max_frames': max_frames,
     'angle': angle,
     'zoom': zoom,
     'translation_x': translation_x,
@@ -818,7 +912,7 @@ def save_settings():
     'extract_nth_frame':extract_nth_frame,
   }
   # print('Settings:', setting_list)
-  with open(f"{batchFolder}/{batch_name}({batchNum})_settings.txt", "w+") as f:   #save settings
+  with open(f"{batchFolder}/{batch_name}({batchNum})_settings.json", "w+") as f:   #save settings
     json.dump(setting_list, f, ensure_ascii=False, indent=4)
 
 #@title 2.3 Define the secondary diffusion model
@@ -1511,19 +1605,19 @@ def do_superres(img, filepath):
 """# 2. Diffusion and CLIP model settings"""
 
 #@markdown ####**Models Settings:**
-diffusion_model = "512x512_diffusion_uncond_finetune_008100" #@param ["256x256_diffusion_uncond", "512x512_diffusion_uncond_finetune_008100"]
-use_secondary_model = True #@param {type: 'boolean'}
+#diffusion_model = "512x512_diffusion_uncond_finetune_008100" #@param ["256x256_diffusion_uncond", "512x512_diffusion_uncond_finetune_008100"]
+#use_secondary_model = True #@param {type: 'boolean'}
 
 timestep_respacing = '50' # param ['25','50','100','150','250','500','1000','ddim25','ddim50', 'ddim75', 'ddim100','ddim150','ddim250','ddim500','ddim1000']
-diffusion_steps = 1000 # param {type: 'number'}
+#diffusion_steps = 1000 # param {type: 'number'}
 use_checkpoint = True #@param {type: 'boolean'}
-ViTB32 = True #@param{type:"boolean"} Low RAM requirement, low accuracy
-ViTB16 = True #@param{type:"boolean"} Low RAM requirement, medium accuracy
-ViTL14 = False #@param{type:"boolean"} High RAM requirement, very high accuracy
-RN101 = True #@param{type:"boolean"} Low RAM requirement, low accuracy
-RN50 = True #@param{type:"boolean"} Low RAM requirement, medium accuracy
-RN50x4 = True #@param{type:"boolean"} Medium RAM requirement, high accuracy
-RN50x16 = False #@param{type:"boolean"} High RAM requirement, high accuracy
+#ViTB32 = True #@param{type:"boolean"} Low RAM requirement, low accuracy
+#ViTB16 = True #@param{type:"boolean"} Low RAM requirement, medium accuracy
+#ViTL14 = False #@param{type:"boolean"} High RAM requirement, very high accuracy
+#RN101 = True #@param{type:"boolean"} Low RAM requirement, low accuracy
+#RN50 = True #@param{type:"boolean"} Low RAM requirement, medium accuracy
+#RN50x4 = True #@param{type:"boolean"} Medium RAM requirement, high accuracy
+#RN50x16 = False #@param{type:"boolean"} High RAM requirement, high accuracy
 SLIPB16 = False # param{type:"boolean"}
 SLIPL16 = False # param{type:"boolean"}
 
@@ -1699,24 +1793,24 @@ normalize = T.Normalize(mean=[0.48145466, 0.4578275, 0.40821073], std=[0.2686295
 lpips_model = lpips.LPIPS(net='vgg').to(device)
 
 """# 3. Settings"""
-
+# REMOVED FOR COMMAND LINE ARGS
 #@markdown ####**Basic Settings:**
-batch_name = 'SpyNovel' #@param{type: 'string'}
-steps = 600 #@param [25,50,100,150,250,500,1000]{type: 'raw', allow-input: true}
-width_height = [512, 832]#@param{type: 'raw'}
-clip_guidance_scale = 5000 #@param{type: 'number'}
-tv_scale =  0#@param{type: 'number'}
-range_scale =   150#@param{type: 'number'}
-sat_scale =   0#@param{type: 'number'}
-cutn_batches = 1  #@param{type: 'number'}
-skip_augs = False#@param{type: 'boolean'}
+#batch_name = 'SpyNovel' #@param{type: 'string'}
+#steps = 600 #@param [25,50,100,150,250,500,1000]{type: 'raw', allow-input: true}
+#width_height = [512, 832]#@param{type: 'raw'}
+#clip_guidance_scale = 5000 #@param{type: 'number'}
+#tv_scale =  0#@param{type: 'number'}
+#range_scale =   150#@param{type: 'number'}
+#sat_scale =   0#@param{type: 'number'}
+#cutn_batches = 1  #@param{type: 'number'}
+#skip_augs = False#@param{type: 'boolean'}
 
 #@markdown ---
 
 #@markdown ####**Init Settings:**
-init_image = None #@param{type: 'string'}
-init_scale = 1000 #@param{type: 'integer'}
-skip_steps = 0 #@param{type: 'integer'}
+#init_image = None #@param{type: 'string'}
+#init_scale = 1000 #@param{type: 'integer'}
+#skip_steps = 0 #@param{type: 'integer'}
 
 #Get corrected sizes
 side_x = (width_height[0]//64)*64;
@@ -1746,8 +1840,8 @@ animation_mode = "None" #@param['None', '2D', 'Video Input']
 #@markdown ---
 
 #@markdown ####**Video Input Settings:**
-video_init_path = "/content/training.mp4" #@param {type: 'string'}
-extract_nth_frame = 2 #@param {type:"number"}
+#video_init_path = "/content/training.mp4" #@param {type: 'string'}
+#extract_nth_frame = 2 #@param {type:"number"}
 
 if animation_mode == "Video Input":
   videoFramesFolder = f'/content/videoFrames'
@@ -1770,25 +1864,25 @@ if animation_mode == "Video Input":
 #@markdown ####**2D Animation Settings:**
 #@markdown `zoom` is a multiplier of dimensions, 1 is no zoom.
 
-key_frames = True #@param {type:"boolean"}
-max_frames = 10000#@param {type:"number"}
+#key_frames = True #@param {type:"boolean"}
+#max_frames = 10000#@param {type:"number"}
 
 if animation_mode == "Video Input":
   max_frames = len(glob(f'{videoFramesFolder}/*.jpg'))
 
-interp_spline = 'Linear' #Do not change, currently will not look good. param ['Linear','Quadratic','Cubic']{type:"string"}
-angle = "0:(0)"#@param {type:"string"}
-zoom = "0: (1), 10: (1.05)"#@param {type:"string"}
-translation_x = "0: (0)"#@param {type:"string"}
-translation_y = "0: (0)"#@param {type:"string"}
+#interp_spline = 'Linear' #Do not change, currently will not look good. param ['Linear','Quadratic','Cubic']{type:"string"}
+#angle = "0:(0)"#@param {type:"string"}
+#zoom = "0: (1), 10: (1.05)"#@param {type:"string"}
+#translation_x = "0: (0)"#@param {type:"string"}
+#translation_y = "0: (0)"#@param {type:"string"}
 
 #@markdown ---
 
 #@markdown ####**Coherency Settings:**
 #@markdown `frame_scale` tries to guide the new frame to looking like the old one. A good default is 1500.
-frames_scale = 1500 #@param{type: 'integer'}
+#frames_scale = 1500 #@param{type: 'integer'}
 #@markdown `frame_skip_steps` will blur the previous frame - higher values will flicker less but struggle to add enough new detail to zoom into.
-frames_skip_steps = '60%' #@param ['40%', '50%', '60%', '70%', '80%'] {type: 'string'}
+#frames_skip_steps = '60%' #@param ['40%', '50%', '60%', '70%', '80%'] {type: 'string'}
 
 
 def parse_key_frames(string, prompt_parser=None):
@@ -2019,19 +2113,19 @@ if sharpen_preset != 'Off' and keep_unsharp is True:
 
 #@markdown *Perlin init will replace your init, so uncheck if using one.*
 
-perlin_init = False  #@param{type: 'boolean'}
-perlin_mode = 'mixed' #@param ['mixed', 'color', 'gray']
-set_seed = 'random_seed' #@param{type: 'string'}
-eta = 0.8#@param{type: 'number'}
-clamp_grad = True #@param{type: 'boolean'}
-clamp_max = 0.05 #@param{type: 'number'}
+#perlin_init = False  #@param{type: 'boolean'}
+#perlin_mode = 'mixed' #@param ['mixed', 'color', 'gray']
+#set_seed = 'random_seed' #@param{type: 'string'}
+#eta = 0.8#@param{type: 'number'}
+#clamp_grad = True #@param{type: 'boolean'}
+#clamp_max = 0.05 #@param{type: 'number'}
 
 
 ### EXTRA ADVANCED SETTINGS:
-randomize_class = True
-clip_denoised = False
-fuzzy_prompt = False
-rand_mag = 0.05
+#randomize_class = True
+#clip_denoised = False
+#fuzzy_prompt = False
+#rand_mag = 0.05
 
 
  #@markdown ---
@@ -2041,14 +2135,14 @@ rand_mag = 0.05
 
 #@markdown cut_overview and cut_innercut are cumulative for total cutn on any given step. Overview cuts see the entire image and are good for early structure, innercuts are your standard cutn.
 
-cut_overview = "[12]*400+[4]*600" #@param {type: 'string'}
-cut_innercut ="[4]*400+[12]*600"#@param {type: 'string'}
-cut_ic_pow = 1#@param {type: 'number'}
-cut_icgray_p = "[0.2]*400+[0]*600"#@param {type: 'string'}
+#cut_overview = "[12]*400+[4]*600" #@param {type: 'string'}
+#cut_innercut ="[4]*400+[12]*600"#@param {type: 'string'}
+#cut_ic_pow = 1#@param {type: 'number'}
+#cut_icgray_p = "[0.2]*400+[0]*600"#@param {type: 'string'}
 
+# REMOVED FOR COMMAND LINE ARGS
 """###Prompts
 `animation_mode: None` will only use the first set. `animation_mode: 2D / Video` will run through them per the set frames and hold on the last one.
-"""
 
 text_prompts = {
     0: ["Cinematic dark alley with rain and puddles, by Leif Heanzo, thriller book cover."],
@@ -2058,13 +2152,14 @@ text_prompts = {
 image_prompts = {
     # 0:['ImagePromptsWorkButArentVeryGood.png:2',],
 }
+"""
 
 """# 4. Diffuse!"""
 
 #@title Do the Run!
 #@markdown `n_batches` ignored with animation modes.
-display_rate =  300 #@param{type: 'number'}
-n_batches =  10 #@param{type: 'number'}
+#display_rate =  300 #@param{type: 'number'}
+#n_batches =  10 #@param{type: 'number'}
 
 batch_size = 1
 
@@ -2098,7 +2193,7 @@ if resume_run:
     try:
       batchNum
     except:
-      batchNum = len(glob(f"{batchFolder}/{batch_name}(*)_settings.txt"))-1
+      batchNum = len(glob(f"{batchFolder}/{batch_name}(*)_settings.json"))-1
   else:
     batchNum = int(run_to_resume)
   if resume_from_frame == 'latest':
@@ -2112,8 +2207,8 @@ if resume_run:
       move_files(start_frame, existing_frames, batchFolder, retainFolder)
 else:
   start_frame = 0
-  batchNum = len(glob(batchFolder+"/*.txt"))
-  while path.isfile(f"{batchFolder}/{batch_name}({batchNum})_settings.txt") is True or path.isfile(f"{batchFolder}/{batch_name}-{batchNum}_settings.txt") is True:
+  batchNum = len(glob(batchFolder+"/*.json"))
+  while path.isfile(f"{batchFolder}/{batch_name}({batchNum})_settings.json") is True or path.isfile(f"{batchFolder}/{batch_name}-{batchNum}_settings.json") is True:
     batchNum += 1
 
 print(f'Starting Run: {batch_name}({batchNum}) at frame {start_frame}')
@@ -2125,6 +2220,7 @@ if set_seed == 'random_seed':
 else:
     seed = int(set_seed)
 
+# Leave this section alone, it takes all our settings and puts them in one variable dictionary
 args = {
     'batchNum': batchNum,
     'prompts_series':split_prompts(text_prompts) if text_prompts else None,
