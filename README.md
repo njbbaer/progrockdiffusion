@@ -99,6 +99,8 @@ To use your own settings.json file (note that putting it in quotes can help pars
 To quickly just override the output directory name and the prompt:
  python3 dd.py -p "A cool image of the author of this program" -o Coolguy
 ```
+Simply edit the settings.json file provided, or copy it and make several that include your favorite settings, if you wish to tweak the defaults.
+
 # Notes
 
 - Currently Superres Sampling doesn't work, it will crash.
