@@ -137,13 +137,13 @@ import argparse
 example_text = '''Usage examples:
 
 To simply use the 'Default' output directory and get settings from settings.json:
- python3 dd.py
+ python3 prd.py
 
 To use your own settings.json (note that putting it in quotes can help parse errors):
- python3 dd.py -s "some_directory/mysettings.json"
+ python3 prd.py -s "some_directory/mysettings.json"
 
 To use the 'Default' output directory and settings, but override the output name and prompt:
- python3 dd.py -p "A cool image of the author of this program" -o Coolguy'''
+ python3 prd.py -p "A cool image of the author of this program" -o Coolguy'''
 
 my_parser = argparse.ArgumentParser(prog='ProgRockDiffusion', description='Generate images from text prompts.', epilog=example_text, formatter_class=argparse.RawDescriptionHelpFormatter)
 my_parser.add_argument('-s', '--settings', action='store', required=False, default='settings.json', help='A settings JSON file to use, best to put in quotes')

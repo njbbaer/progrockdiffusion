@@ -26,7 +26,7 @@ wget https://repo.anaconda.com/archive/Anaconda3-2021.11-Linux-x86_64.sh
 
 ## Install Anaconda
 ```
-bash Anaconda3-2021.11-Linux-x86_64.sh 
+bash Anaconda3-2021.11-Linux-x86_64.sh
 respond 'yes' to accept license terms and provide install dir when prompted
 respond 'yes' to run conda initialization
 ```
@@ -73,7 +73,7 @@ apt install imagemagick
 # Use
 
 ```
-usage: python3 dd.py [-h] [-s SETTINGS] [-o OUTPUT] [-p PROMPT]
+usage: python3 prd.py [-h] [-s SETTINGS] [-o OUTPUT] [-p PROMPT]
 
 Generate images from text prompts.
 By default, the supplied settings.json file will be used.
@@ -91,13 +91,13 @@ Optional arguments:
 Usage examples:
 
 To use the Default output directory and settings from settings.json:
- python3 dd.py
+ python3 prd.py
 
 To use your own settings.json file (note that putting it in quotes can help parse errors):
- python3 dd.py -s "some_directory/mysettings.json"
+ python3 prd.py -s "some_directory/mysettings.json"
 
 To quickly just override the output directory name and the prompt:
- python3 dd.py -p "A cool image of the author of this program" -o Coolguy
+ python3 prd.py -p "A cool image of the author of this program" -o Coolguy
 ```
 Simply edit the settings.json file provided, or copy it and make several that include your favorite settings, if you wish to tweak the defaults.
 
