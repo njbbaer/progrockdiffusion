@@ -107,7 +107,7 @@ Simply edit the settings.json file provided, or copy it and make several that in
 # Notes
 
 - Currently Superres Sampling doesn't work, it will crash.
-- When using multiple prompts only the last prompt is used.
+- Animations are untested but likely not working
 
 # TODO
 
