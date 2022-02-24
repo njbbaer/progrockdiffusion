@@ -143,7 +143,10 @@ To use your own settings.json (note that putting it in quotes can help parse err
  python3 prd.py -s "some_directory/mysettings.json"
 
 To use the 'Default' output directory and settings, but override the output name and prompt:
- python3 prd.py -p "A cool image of the author of this program" -o Coolguy'''
+ python3 prd.py -p "A cool image of the author of this program" -o Coolguy
+
+To use multiple prompts with optional weight values:
+ python3 prd.py -p "A cool image of the author of this program" -p "Pale Blue Sky:.5"'''
 
 my_parser = argparse.ArgumentParser(prog='ProgRockDiffusion', description='Generate images from text prompts.', epilog=example_text, formatter_class=argparse.RawDescriptionHelpFormatter)
 my_parser.add_argument('-s', '--settings', action='store', required=False, default='settings.json', help='A settings JSON file to use, best to put in quotes')
@@ -619,18 +622,17 @@ def do_run():
             model_stat = {"clip_model":None,"target_embeds":[],"make_cutouts":None,"weights":[]}
             model_stat["clip_model"] = clip_model
 
-
             for prompt in frame_prompt:
                 txt, weight = parse_prompt(prompt)
                 txt = clip_model.encode_text(clip.tokenize(prompt).to(device)).float()
 
-            if args.fuzzy_prompt:
-                for i in range(25):
-                    model_stat["target_embeds"].append((txt + torch.randn(txt.shape).cuda() * args.rand_mag).clamp(0,1))
+                if args.fuzzy_prompt:
+                    for i in range(25):
+                        model_stat["target_embeds"].append((txt + torch.randn(txt.shape).cuda() * args.rand_mag).clamp(0,1))
+                        model_stat["weights"].append(weight)
+                else:
+                    model_stat["target_embeds"].append(txt)
                     model_stat["weights"].append(weight)
-            else:
-                model_stat["target_embeds"].append(txt)
-                model_stat["weights"].append(weight)
 
             if image_prompt:
               model_stat["make_cutouts"] = MakeCutouts(clip_model.visual.input_resolution, cutn, skip_augs=skip_augs)
