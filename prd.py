@@ -110,6 +110,7 @@ import random
 from ipywidgets import Output
 import hashlib
 import urllib.request
+from os.path import exists
 
 
 #SuperRes
@@ -1272,11 +1273,15 @@ def download_models(mode):
         path_conf = f'{model_path}/superres/project.yaml'
         path_ckpt = f'{model_path}/superres/last.ckpt'
 
-        download_url(url_conf, path_conf)
-        download_url(url_ckpt, path_ckpt)
+        if(not exists(path_conf)):
+            download_url(url_conf, path_conf)
+            path_conf = path_conf + '/?dl=1' # fix it
+        if(not exists(path_ckpt)):
+            download_url(url_ckpt, path_ckpt)
+            path_ckpt = path_ckpt + '/?dl=1' # fix it
 
-        path_conf = path_conf + '/?dl=1' # fix it
-        path_ckpt = path_ckpt + '/?dl=1' # fix it
+
+        
         return path_conf, path_ckpt
 
     else:
