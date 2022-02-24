@@ -132,32 +132,24 @@ from omegaconf import OmegaConf
 import warnings
 warnings.filterwarnings("ignore", category=UserWarning)
 
-
-import torch
-device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-print('Using device:', device)
-
-if torch.cuda.get_device_capability(device) == (8,0): ## A100 fix thanks to Emad
-  print('Disabling CUDNN for A100 gpu', file=sys.stderr)
-  torch.backends.cudnn.enabled = False
-
 # Command Line parse
 import argparse
 example_text = '''Usage examples:
 
-Use the 'Default' output directory and get settings from settings.json:
+To simply use the 'Default' output directory and get settings from settings.json:
  python3 dd.py
 
-Use your own settings.json (note that putting it in quotes can help parse errors):
+To use your own settings.json (note that putting it in quotes can help parse errors):
  python3 dd.py -s "some_directory/mysettings.json"
 
-Use the 'Default' output directory and settings, but override the output name and prompt:
+To use the 'Default' output directory and settings, but override the output name and prompt:
  python3 dd.py -p "A cool image of the author of this program" -o Coolguy'''
 
 my_parser = argparse.ArgumentParser(prog='ProgRockDiffusion', description='Generate images from text prompts.', epilog=example_text, formatter_class=argparse.RawDescriptionHelpFormatter)
 my_parser.add_argument('-s', '--settings', action='store', required=False, default='settings.json', help='A settings JSON file to use, best to put in quotes')
 my_parser.add_argument('-o', '--output', action='store', required=False, help='What output directory to use within images_out')
 my_parser.add_argument('-p', '--prompt', action='append', required=False, help='Override the prompt')
+my_parser.add_argument('-i', '--ignoreseed', action='store_true', required=False, help='Ignores the random seed in the settings file')
 
 cl_args = my_parser.parse_args()
 
@@ -229,9 +221,20 @@ if cl_args.output:
     print(f'Setting Output dir to {batch_name}')
 
 if cl_args.prompt:
-    print(f'Loaded prompt was {text_prompts}')
     text_prompts["0"] = cl_args.prompt
-    print(f'Setting initial prompt to {text_prompts}')
+    print(f'Setting prompt to {text_prompts}')
+
+if cl_args.ignoreseed:
+    set_seed = 'random_seed'
+    print(f'Using a random seed instead of the one provided by the JSON file.')
+
+import torch
+device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+print('Using device:', device)
+
+if torch.cuda.get_device_capability(device) == (8,0): ## A100 fix thanks to Emad
+  print('Disabling CUDNN for A100 gpu', file=sys.stderr)
+  torch.backends.cudnn.enabled = False
 
 #@title 2.2 Define necessary functions
 
