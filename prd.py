@@ -207,6 +207,9 @@ RN101 = (settings_file['RN101'])
 RN50 = (settings_file['RN50'])
 RN50x4 = (settings_file['RN50x4'])
 RN50x16 = (settings_file['RN50x16'])
+RN50x64 = (settings_file['RN50x64'])
+SLIPB16 = (settings_file['SLIPB16'])
+SLIPL16 = (settings_file['SLIPL16'])
 cut_overview = (settings_file['cut_overview'])
 cut_innercut = (settings_file['cut_innercut'])
 cut_ic_pow = (settings_file['cut_ic_pow'])
@@ -905,6 +908,9 @@ def save_settings():
     'RN50': RN50,
     'RN50x4': RN50x4,
     'RN50x16': RN50x16,
+    'RN50x64': RN50x64,
+    'SLIPB16': SLIPB16,
+    'SLIPL16': SLIPL16,
     'cut_overview': str(cut_overview),
     'cut_innercut': str(cut_innercut),
     'cut_ic_pow': cut_ic_pow,
@@ -1767,6 +1773,7 @@ if ViTL14 is True: clip_models.append(clip.load('ViT-L/14', jit=False)[0].eval()
 if RN50 is True: clip_models.append(clip.load('RN50', jit=False)[0].eval().requires_grad_(False).to(device))
 if RN50x4 is True: clip_models.append(clip.load('RN50x4', jit=False)[0].eval().requires_grad_(False).to(device))
 if RN50x16 is True: clip_models.append(clip.load('RN50x16', jit=False)[0].eval().requires_grad_(False).to(device))
+if RN50x64 is True: clip_models.append(clip.load('RN50x64', jit=False)[0].eval().requires_grad_(False).to(device))
 if RN101 is True: clip_models.append(clip.load('RN101', jit=False)[0].eval().requires_grad_(False).to(device))
 
 if SLIPB16:
