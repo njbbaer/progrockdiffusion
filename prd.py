@@ -146,7 +146,10 @@ To use the 'Default' output directory and settings, but override the output name
  python3 prd.py -p "A cool image of the author of this program" -o Coolguy
 
 To use multiple prompts with optional weight values:
- python3 prd.py -p "A cool image of the author of this program" -p "Pale Blue Sky:.5"'''
+ python3 prd.py -p "A cool image of the author of this program" -p "Pale Blue Sky:.5"
+
+You can ignore the seed coming from a settings file by adding -i, resulting in a new random seed
+'''
 
 my_parser = argparse.ArgumentParser(prog='ProgRockDiffusion', description='Generate images from text prompts.', epilog=example_text, formatter_class=argparse.RawDescriptionHelpFormatter)
 my_parser.add_argument('-s', '--settings', action='store', required=False, default='settings.json', help='A settings JSON file to use, best to put in quotes')

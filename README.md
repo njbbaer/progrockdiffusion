@@ -101,6 +101,8 @@ To quickly just override the output directory name and the prompt:
 
 Multiple prompts with weight values are supported:
  python3 prd.py -p "A cool image of the author of this program" -p "Pale Blue Sky:.5"
+
+You can ignore the seed coming from a settings file by adding -i, resulting in a new random seed
 ```
 Simply edit the settings.json file provided, or copy it and make several that include your favorite settings, if you wish to tweak the defaults.
 
