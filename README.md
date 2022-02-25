@@ -87,6 +87,8 @@ Optional arguments:
                         What output directory to use within images_out
   -p PROMPT, --prompt PROMPT
                         Override the prompt
+  -i, --ignoreseed
+                        Use a random seed instead of what is in your settings file
 
 Usage examples:
 
