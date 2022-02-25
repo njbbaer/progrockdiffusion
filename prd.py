@@ -154,6 +154,7 @@ my_parser.add_argument('-s', '--settings', action='store', required=False, defau
 my_parser.add_argument('-o', '--output', action='store', required=False, help='What output directory to use within images_out')
 my_parser.add_argument('-p', '--prompt', action='append', required=False, help='Override the prompt')
 my_parser.add_argument('-i', '--ignoreseed', action='store_true', required=False, help='Ignores the random seed in the settings file')
+my_parser.add_argument('-os', '--override-settings', action='store', required=False, help='A settings JSON file that overrides other settings')
 
 cl_args = my_parser.parse_args()
 
@@ -165,6 +166,15 @@ except Exception as e:
     print('Failed to open or parse ' + cl_args.settings + ' - Check formatting.')
     print(e)
     quit()
+
+if(cl_args.override_settings):
+    try:
+        with open(cl_args.override_settings,'r') as json_file:
+            settings_file.update(json.load(json_file))
+    except Exception as e:
+        print('Failed to open or parse ' + cl_args.override_settings + ' - Check formatting.')
+        print(e)
+        quit()        
 
 # Set all of the settings from the specified file
 batch_name = (settings_file['batch_name'])
@@ -195,7 +205,8 @@ set_seed = (settings_file['set_seed'])
 fuzzy_prompt = (settings_file['fuzzy_prompt'])
 rand_mag = (settings_file['rand_mag'])
 eta = (settings_file['eta'])
-width_height = [(settings_file['width']), (settings_file['height'])]
+width_height_scale = (settings_file['width_height_scale'])
+width_height = [(settings_file['width'] * settings_file['width_height_scale']), (settings_file['height'] * settings_file['width_height_scale'])]
 diffusion_model = (settings_file['diffusion_model'])
 use_secondary_model = (settings_file['use_secondary_model'])
 steps = (settings_file['steps'])
@@ -869,8 +880,9 @@ def save_settings():
     'n_batches': n_batches,
     'steps': steps,
     'display_rate': display_rate,
-    'width': width_height[0],
-    'height': width_height[1],
+    'width_height_scale': width_height_scale,
+    'width': width_height[0] / width_height_scale,
+    'height': width_height[1] / width_height_scale,
     'set_seed': seed,
     'image_prompts': image_prompts,
     'clip_guidance_scale': clip_guidance_scale,
@@ -2236,6 +2248,8 @@ if set_seed == 'random_seed':
     # print(f'Using seed: {seed}')
 else:
     seed = int(set_seed)
+
+print(f'Using seed {seed}')
 
 # Leave this section alone, it takes all our settings and puts them in one variable dictionary
 args = {
