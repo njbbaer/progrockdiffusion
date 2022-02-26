@@ -10,6 +10,7 @@
     "display_rate": 50,
     "width": 832,
     "height": 512,
+    "use_cpu": false,
     "set_seed": "random_seed",
     "image_prompts": {},
     "clip_guidance_scale": 5000,

@@ -169,6 +169,7 @@ except Exception as e:
     quit()
 
 # Set all of the settings from the specified file
+use_cpu = (settings_file['use_cpu'])
 batch_name = (settings_file['batch_name'])
 text_prompts = (settings_file['text_prompts'])
 image_prompts = (settings_file['image_prompts'])
@@ -235,10 +236,10 @@ if cl_args.ignoreseed:
     print(f'Using a random seed instead of the one provided by the JSON file.')
 
 import torch
-device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+device = torch.device('cuda:0' if (not use_cpu and torch.cuda.is_available()) else 'cpu')
 print('Using device:', device)
 
-if torch.cuda.get_device_capability(device) == (8,0): ## A100 fix thanks to Emad
+if not use_cpu and torch.cuda.get_device_capability(device) == (8,0): ## A100 fix thanks to Emad
   print('Disabling CUDNN for A100 gpu', file=sys.stderr)
   torch.backends.cudnn.enabled = False
 
