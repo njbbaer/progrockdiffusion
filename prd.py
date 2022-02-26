@@ -598,7 +598,8 @@ def do_run():
           np.random.seed(seed)
           random.seed(seed)
           torch.manual_seed(seed)
-          torch.cuda.manual_seed_all(seed)
+          if use_cpu:
+              torch.cuda.manual_seed_all(seed)
           torch.backends.cudnn.deterministic = True
 
       target_embeds, weights = [], []
@@ -632,7 +633,8 @@ def do_run():
 
                 if args.fuzzy_prompt:
                     for i in range(25):
-                        model_stat["target_embeds"].append((txt + torch.randn(txt.shape).cuda() * args.rand_mag).clamp(0,1))
+                        #model_stat["target_embeds"].append((txt + torch.randn(txt.shape).cuda() * args.rand_mag).clamp(0,1))
+                        model_stat["target_embeds"].append((txt + torch.randn(txt.shape) * args.rand_mag).clamp(0,1))
                         model_stat["weights"].append(weight)
                 else:
                     model_stat["target_embeds"].append(txt)
@@ -648,7 +650,8 @@ def do_run():
                   embed = clip_model.encode_image(normalize(batch)).float()
                   if fuzzy_prompt:
                       for i in range(25):
-                          model_stat["target_embeds"].append((embed + torch.randn(embed.shape).cuda() * rand_mag).clamp(0,1))
+                          #model_stat["target_embeds"].append((embed + torch.randn(embed.shape).cuda() * rand_mag).clamp(0,1))
+                          model_stat["target_embeds"].append((embed + torch.randn(embed.shape) * rand_mag).clamp(0,1))
                           weights.extend([weight / cutn] * cutn)
                   else:
                       model_stat["target_embeds"].append(embed)
@@ -760,7 +763,8 @@ def do_run():
           print('')
           #display.display(image_display)
           gc.collect()
-          torch.cuda.empty_cache()
+          if not use_cpu:
+              torch.cuda.empty_cache()
           cur_t = diffusion.num_timesteps - skip_steps - 1
           total_steps = cur_t
 
@@ -1295,7 +1299,8 @@ def load_model_from_config(config, ckpt):
     sd = pl_sd["state_dict"]
     model = instantiate_from_config(config.model)
     m, u = model.load_state_dict(sd, strict=False)
-    model.cuda()
+    if not use_cpu:
+        model.cuda()
     model.eval()
     return {"model": model}, global_step
 
@@ -1552,7 +1557,8 @@ def do_superres(img, filepath):
   sr_downsample_method = 'Lanczos'
 
   gc.collect()
-  torch.cuda.empty_cache()
+  if not use_cpu:
+      torch.cuda.empty_cache()
 
   im_og = img
   width_og, height_og = im_og.size
@@ -2312,7 +2318,8 @@ if model_config['use_fp16']:
     model.convert_to_fp16()
 
 gc.collect()
-torch.cuda.empty_cache()
+if not use_cpu:
+    torch.cuda.empty_cache()
 try:
   do_run()
 except KeyboardInterrupt:
@@ -2320,7 +2327,8 @@ except KeyboardInterrupt:
 finally:
     print('Seed used:', seed)
     gc.collect()
-    torch.cuda.empty_cache()
+    if not use_cpu:
+        torch.cuda.empty_cache()
 
 """# 5. Create the video"""
 

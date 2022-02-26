@@ -61,14 +61,19 @@ pip install -e ./CLIP
 pip install -e ./guided-diffusion
 pip install -e ./taming-transformers
 pip install lpips datetime timm
-pip install https://download.pytorch.org/whl/cu111/torch-1.10.0%2Bcu111-cp37-cp37m-linux_x86_64.whl
-pip install https://download.pytorch.org/whl/cu111/torchaudio-0.10.0%2Bcu111-cp37-cp37m-linux_x86_64.whl
-pip install https://download.pytorch.org/whl/cu111/torchvision-0.11.1%2Bcu111-cp37-cp37m-linux_x86_64.whl
 pip install ipywidgets omegaconf pytorch_lightning einops
 pip install matplotlib pandas
 conda install opencv
 apt install imagemagick
 ```
+
+## Install Torch dependencies (if using GPU with CUDA)
+pip install https://download.pytorch.org/whl/cu111/torch-1.10.0%2Bcu111-cp37-cp37m-linux_x86_64.whl
+pip install https://download.pytorch.org/whl/cu111/torchaudio-0.10.0%2Bcu111-cp37-cp37m-linux_x86_64.whl
+pip install https://download.pytorch.org/whl/cu111/torchvision-0.11.1%2Bcu111-cp37-cp37m-linux_x86_64.whl
+
+## Install Torch dependencies (if using CPU)
+conda install pytorch torchvision torchaudio cpuonly -c pytorch
 
 # Use
 
