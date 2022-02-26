@@ -1098,8 +1098,9 @@ class DDIMSampler(object):
 
     def register_buffer(self, name, attr):
         if type(attr) == torch.Tensor:
-            if attr.device != torch.device("cuda"):
-                attr = attr.to(torch.device("cuda"))
+            desired_device = torch.device("cpu") if use_cpu else torch.device("cuda")
+            if attr.device != desired_device:
+                attr = attr.to(desired_device)
         setattr(self, name, attr)
 
     def make_schedule(self, ddim_num_steps, ddim_discretize="uniform", ddim_eta=0., verbose=True):
@@ -1367,7 +1368,8 @@ def get_cond(mode, img):
         c = rearrange(c, '1 c h w -> 1 h w c')
         c = 2. * c - 1.
 
-        c = c.to(torch.device("cuda"))
+        device = torch.device("cpu") if use_cpu else torch.device("cuda")
+        c = c.to(device)
         example["LR_image"] = c
         example["image"] = c_up
 
