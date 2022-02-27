@@ -1,8 +1,9 @@
 # What do all the settings do?
 This document hopes to explain what the various settings are. Some of them we're still figuring out. :)
 
-| **batch_name** | "Default" | The directory within images_out to store your results
+| *Setting name* | *Default in settings.json* | *Explanation*
 | -------------------------|------------------------|:---
+| **batch_name** | "Default" | The directory within images_out to store your results
 | **text_prompts** | "The Big Sur Coast, by Asher Brown Durand, featured on ArtStation." | The phrase(s) to use for generating an image
 | **n_batches** | 1 | How many images to generate
 | **steps** | 500 | Generally, the more steps you run, the more detailed the results. At least 250 is recommended.
