@@ -21,7 +21,7 @@ This document hopes to explain what the various settings are. Some of them we're
 | **interp_spline** | "Linear" | Do not change, currently will not look good.
 | **init_image** | null | The starting image to use. Usuallly leave this blank and it will start with randomness
 | **init_scale** | 1000 | This enhances the effect of the init image, a good value is 1000
-| **skip_steps** | 0 | How many steps in the overall process to skip. Generally leave this at 0
+| **skip_steps** | 0 | How many steps in the overall process to skip. Generally leave this at 0, though if using an init_image it is recommended to be 50% of overall steps
 | **frames_scale** | 1500 | Tries to guide the new frame to looking like the old one. A good default is 1500.
 | **frames_skip_steps** | "60%" | Will blur the previous frame - higher values will flicker less
 | **perlin_init** | false | Option to start with random perlin noise
