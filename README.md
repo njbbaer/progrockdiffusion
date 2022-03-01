@@ -44,7 +44,7 @@ conda activate progrockdiffusion
 
 ## Clone the prog rock diffusion repo
 ```
-git clone git@github.com:lowfuel/progrockdiffusion.git
+git clone [your-github-username]@github.com:lowfuel/progrockdiffusion.git
 cd progrockdiffusion
 ```
 Note: the "cd" command above is important, as the next steps will add additional libraries and data to ProgRockDiffusion
