@@ -11,6 +11,14 @@ Ubuntu 20.04 (A docker environment, VM, or Windows Subsystem for Linux will work
 
 CUDA 11.4 (installation instructions can be found here: https://developer.nvidia.com/cuda-11-4-1-download-archive
 
+You can test that your environment is working properly by running:
+
+```
+nvidia-smi
+```
+
+The output should indicate a driver version, CUDA version, and so on. If you get an error, stop here and troubleshoot how to get Nvidia drivers, CUDA, and/or a connection to your GPU with the environment you're using.
+
 # First time setup
 
 ## Update Ubuntu 20.04 packages
