@@ -68,7 +68,7 @@ pip install https://download.pytorch.org/whl/cu111/torchvision-0.11.1%2Bcu111-cp
 pip install ipywidgets omegaconf pytorch_lightning einops
 pip install matplotlib pandas
 conda install opencv
-apt install imagemagick
+sudo apt install imagemagick
 ```
 
 # Use
