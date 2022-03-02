@@ -71,6 +71,9 @@ conda install opencv
 sudo apt install imagemagick
 ```
 
+NOTE: On your first run it might appear to hang. Let it go for a good while, though, as it might just be downloading models.
+Somtimes there is no feedback during the download process (why? Who knows)
+
 # Use
 
 ```
