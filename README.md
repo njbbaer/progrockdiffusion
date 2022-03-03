@@ -80,7 +80,7 @@ conda install opencv
 Depending on your platform, you may get an error about libGL.so.1
 If you do, try installing these dependencies:
 ```
-apt-get install ffmpeg libsm6 libxext6 -y
+sudo apt-get install ffmpeg libsm6 libxext6 -y
 ```
 Finally:
 ```
