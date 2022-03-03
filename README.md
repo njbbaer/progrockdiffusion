@@ -76,13 +76,22 @@ pip install https://download.pytorch.org/whl/cu111/torchvision-0.11.1%2Bcu111-cp
 pip install ipywidgets omegaconf pytorch_lightning einops
 pip install matplotlib pandas
 conda install opencv
+```
+Depending on your platform, you may get an error about libGL.so.1
+If you do, try installing these dependencies:
+```
+apt-get install ffmpeg libsm6 libxext6 -y
+```
+Finally:
+```
 sudo apt install imagemagick
 ```
+
+# Use
 
 NOTE: On your first run it might appear to hang. Let it go for a good while, though, as it might just be downloading models.
 Somtimes there is no feedback during the download process (why? Who knows)
 
-# Use
 
 ```
 usage: python3 prd.py [-h] [-s SETTINGS] [-o OUTPUT] [-p PROMPT]
