@@ -7,7 +7,8 @@ An Nvidia GPU capable of running CUDA-based softare. 8gb is probably the minimum
 This author has an RTX 3080 with 10gb and it runs fairly well, but some advanced features are not possible with "only" 10gb.
 
 # Software prerequisties
-Ubuntu 20.04 (A docker environment, VM, or Windows Subsystem for Linux will work provided it can access your GPU).
+Ubuntu 20.04 (A docker environment, VM, or Windows Subsystem for Linux should work provided it can access your GPU).
+Note that Windows Subsystem for Linux (WSL) has only been successful on Windows 11 using WSL2, due to Nvidia driver integration.
 
 CUDA 11.4 (installation instructions can be found here: https://developer.nvidia.com/cuda-11-4-1-download-archive
 
