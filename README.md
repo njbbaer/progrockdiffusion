@@ -1,5 +1,5 @@
 # progrockdiffusion
-A command line version of Disco Diffusion
+A command line version of [Disco Diffusion](https://github.com/alembics/disco-diffusion).
 
 # Hardware prerequisites
 An Nvidia GPU capable of running CUDA-based softare. 8gb is probably the minimum amount of GPU memory.
