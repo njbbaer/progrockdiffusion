@@ -137,4 +137,4 @@ Simply edit the settings.json file provided, or copy it and make several that in
 # TODO
 
 - The SLIP models are currently failing due to a variable not being defined.
-- Provide a section in this readme that goes over all the settings in settings.json and what they do, since we don't have the colab notebook to show those hints
+- Native Windows support
