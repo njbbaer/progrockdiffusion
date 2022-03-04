@@ -42,10 +42,7 @@ respond 'yes' to accept license terms and provide install dir when prompted
 respond 'yes' to run conda initialization
 ```
 
-## Reboot for changes to take effect
-```
-sudo reboot
-```
+## Logout and back in for the changes to take effect
 
 ## Create prog rock diffusion env
 ```
