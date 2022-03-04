@@ -6,6 +6,8 @@ An Nvidia GPU capable of running CUDA-based softare. 8gb is probably the minimum
 
 This author has an RTX 3080 with 10gb and it runs fairly well, but some advanced features are not possible with "only" 10gb.
 
+You'll also need between 20 and 40gb of free disk space, depending on which models you enable.
+
 # Software prerequisties
 Ubuntu 20.04 (A docker environment, VM, or Windows Subsystem for Linux should work provided it can access your GPU).
 Note that Windows Subsystem for Linux (WSL) has only been successful on Windows 11 using WSL2, due to Nvidia driver integration.
@@ -40,10 +42,7 @@ respond 'yes' to accept license terms and provide install dir when prompted
 respond 'yes' to run conda initialization
 ```
 
-## Reboot for changes to take effect
-```
-sudo reboot
-```
+## Logout and back in for the changes to take effect
 
 ## Create prog rock diffusion env
 ```
@@ -80,7 +79,7 @@ conda install opencv
 Depending on your platform, you may get an error about libGL.so.1
 If you do, try installing these dependencies:
 ```
-apt-get install ffmpeg libsm6 libxext6 -y
+sudo apt-get install ffmpeg libsm6 libxext6 -y
 ```
 Finally:
 ```
@@ -137,4 +136,4 @@ Simply edit the settings.json file provided, or copy it and make several that in
 # TODO
 
 - The SLIP models are currently failing due to a variable not being defined.
-- Provide a section in this readme that goes over all the settings in settings.json and what they do, since we don't have the colab notebook to show those hints
+- Native Windows support

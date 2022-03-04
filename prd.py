@@ -306,6 +306,8 @@ def regen_perlin():
     return init.expand(batch_size, -1, -1, -1)
 
 def fetch(url_or_path):
+    print(f'Fetching {str(url_or_path)}')
+    print(f'This might take a while... please wait.')
     if str(url_or_path).startswith('http://') or str(url_or_path).startswith('https://'):
         r = requests.get(url_or_path)
         r.raise_for_status()
@@ -1662,6 +1664,7 @@ if diffusion_model == '256x256_diffusion_uncond':
   elif os.path.exists(model_256_path) and not check_model_SHA or model_256_downloaded == True:
     print('256 Model already downloaded, check check_model_SHA if the file is corrupt')
   else:
+    print("256 Model downloading, this might take a while...")
     #!wget --continue {model_256_link} -P {model_path}
     urllib.request.urlretrieve(model_256_link, model_256_path)
     model_256_downloaded = True
@@ -1684,6 +1687,7 @@ elif diffusion_model == '512x512_diffusion_uncond_finetune_008100':
   else:
     #!wget --continue {model_512_link} -P {model_path}
     print(model_path)
+    print("512 Model downloading, this might take a while...")
     urllib.request.urlretrieve(model_512_link, model_512_path)
     model_512_downloaded = True
 
@@ -1707,6 +1711,7 @@ if use_secondary_model == True:
     print('Secondary Model already downloaded, check check_model_SHA if the file is corrupt')
   else:
     #!wget --continue {model_secondary_link} -P {model_path}
+    print('Secondary Model downloading, this might take a while...')
     urllib.request.urlretrieve(model_secondary_link, model_secondary_path)
     model_secondary_downloaded = True
 
