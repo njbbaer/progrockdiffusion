@@ -6,6 +6,8 @@ An Nvidia GPU capable of running CUDA-based softare. 8gb is probably the minimum
 
 This author has an RTX 3080 with 10gb and it runs fairly well, but some advanced features are not possible with "only" 10gb.
 
+You'll also need between 20 and 40gb of free disk space, depending on which models you enable.
+
 # Software prerequisties
 Ubuntu 20.04 (A docker environment, VM, or Windows Subsystem for Linux should work provided it can access your GPU).
 Note that Windows Subsystem for Linux (WSL) has only been successful on Windows 11 using WSL2, due to Nvidia driver integration.
