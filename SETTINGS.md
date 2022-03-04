@@ -1,6 +1,8 @@
 # What do all the settings do?
 This document hopes to explain what the various settings are. Some of them we're still figuring out. :)
 
+| *Setting name* | *Default in settings.json* | *Explanation*
+| -------------------------|------------------------|:---
 | **batch_name** | "Default" | The directory within images_out to store your results
 | **text_prompts** | "The Big Sur Coast, by Asher Brown Durand, featured on ArtStation." | The phrase(s) to use for generating an image
 | **n_batches** | 1 | How many images to generate
@@ -19,7 +21,7 @@ This document hopes to explain what the various settings are. Some of them we're
 | **interp_spline** | "Linear" | Do not change, currently will not look good.
 | **init_image** | null | The starting image to use. Usuallly leave this blank and it will start with randomness
 | **init_scale** | 1000 | This enhances the effect of the init image, a good value is 1000
-| **skip_steps** | 0 | How many steps in the overall process to skip. Generally leave this at 0
+| **skip_steps** | 0 | How many steps in the overall process to skip. Generally leave this at 0, though if using an init_image it is recommended to be 50% of overall steps
 | **frames_scale** | 1500 | Tries to guide the new frame to looking like the old one. A good default is 1500.
 | **frames_skip_steps** | "60%" | Will blur the previous frame - higher values will flicker less
 | **perlin_init** | false | Option to start with random perlin noise
@@ -42,14 +44,14 @@ This document hopes to explain what the various settings are. Some of them we're
 | **RN50** | true | Enable or disable the VitB32 CLIP model. Med memory, med accuracy
 | **RN50x4** | false | Enable or disable the VitB32 CLIP model. High memory, high accuracy
 | **RN50x16** | false | Enable or disable the VitB32 CLIP model. Very high memory, high accuracy
-| **cut_overview** | "[12]*400+[4]*600" | How many "big picture" passes to do. More towards the start, less later, is the general idea
-| **cut_innercut** | "[4]*400+[12]*600" | Conversely, how many detail passes to do. Fewer at the start, then get more detailed
+| **cut_overview** | "[12]\*400+[4]\*600" | How many "big picture" passes to do. More towards the start, less later, is the general idea
+| **cut_innercut** | "[4]\*400+[12]\*600" | Conversely, how many detail passes to do. Fewer at the start, then get more detailed
 | **cut_ic_pow** | 1 | Anyone? Beuller?
-| **cut_icgray_p** | "[0.2]*400+[0]*600" | Anyone? Beuller?
+| **cut_icgray_p** | "[0.2]\*400+[0]\*600" | Anyone? Beuller?
 | **key_frames** | true | Animation stuff...
-| **angle** | "0** | (0)"| Animation stuff...
-| **zoom** | "0** | (1), 10** | (1.05)"| Animation stuff...
-| **translation_x** | "0** | (0)"| Animation stuff...
-| **translation_y** | "0** | (0)"| Animation stuff...
+| **angle** | "0:(0)"| Animation stuff...
+| **zoom** | "0: (1), 10: (1.05)" | Animation stuff...
+| **translation_x** | "0: (0)" | Animation stuff...
+| **translation_y** | "0: (0)" | Animation stuff...
 | **video_init_path** | "/content/training.mp4"| Animation stuff...
 | **extract_nth_frame** | 2 | Animation stuff...

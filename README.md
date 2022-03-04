@@ -1,5 +1,5 @@
 # progrockdiffusion
-A command line version of Disco Diffusion
+A command line version of [Disco Diffusion](https://github.com/alembics/disco-diffusion).
 
 # Hardware prerequisites
 An Nvidia GPU capable of running CUDA-based softare. 8gb is probably the minimum amount of GPU memory.
@@ -7,9 +7,18 @@ An Nvidia GPU capable of running CUDA-based softare. 8gb is probably the minimum
 This author has an RTX 3080 with 10gb and it runs fairly well, but some advanced features are not possible with "only" 10gb.
 
 # Software prerequisties
-Ubuntu 20.04 (A docker environment, VM, or Windows Subsystem for Linux will work provided it can access your GPU).
+Ubuntu 20.04 (A docker environment, VM, or Windows Subsystem for Linux should work provided it can access your GPU).
+Note that Windows Subsystem for Linux (WSL) has only been successful on Windows 11 using WSL2, due to Nvidia driver integration.
 
-CUDA 11.4 (installation instructions can be found here: https://developer.nvidia.com/cuda-11-4-1-download-archive
+CUDA 11.4 (installation instructions can be found here: https://developer.nvidia.com/cuda-11-4-1-download-archive). Note that this seems to be working out of the box on WSL2 for Windows 11.
+
+You can test that your environment is working properly by running:
+
+```
+nvidia-smi
+```
+
+The output should indicate a driver version, CUDA version, and so on. If you get an error, stop here and troubleshoot how to get Nvidia drivers, CUDA, and/or a connection to your GPU with the environment you're using.
 
 # First time setup
 
@@ -44,7 +53,7 @@ conda activate progrockdiffusion
 
 ## Clone the prog rock diffusion repo
 ```
-git clone git@github.com:lowfuel/progrockdiffusion.git
+git clone https://github.com/lowfuel/progrockdiffusion.git
 cd progrockdiffusion
 ```
 Note: the "cd" command above is important, as the next steps will add additional libraries and data to ProgRockDiffusion
@@ -67,10 +76,22 @@ pip install https://download.pytorch.org/whl/cu111/torchvision-0.11.1%2Bcu111-cp
 pip install ipywidgets omegaconf pytorch_lightning einops
 pip install matplotlib pandas
 conda install opencv
-apt install imagemagick
+```
+Depending on your platform, you may get an error about libGL.so.1
+If you do, try installing these dependencies:
+```
+sudo apt-get install ffmpeg libsm6 libxext6 -y
+```
+Finally:
+```
+sudo apt install imagemagick
 ```
 
 # Use
+
+NOTE: On your first run it might appear to hang. Let it go for a good while, though, as it might just be downloading models.
+Somtimes there is no feedback during the download process (why? Who knows)
+
 
 ```
 usage: python3 prd.py [-h] [-s SETTINGS] [-o OUTPUT] [-p PROMPT]
