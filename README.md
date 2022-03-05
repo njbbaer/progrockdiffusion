@@ -52,8 +52,10 @@ respond 'yes' to run conda initialization
 Download from here and install: https://www.anaconda.com/products/individual
 ```
 
-## **Linux** Logout and back in for the changes to take effect
-## **Windows** From the start menu, open a "Anaconda Powershell Prompt" (*Powershell* is important)
+## **Linux**
+Logout and back in for the changes to take effect
+## **Windows**
+From the start menu, open a "Anaconda Powershell Prompt" (*Powershell* is important)
 
 ## Create prog rock diffusion env
 ```
