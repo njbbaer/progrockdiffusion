@@ -1278,6 +1278,8 @@ def download_models(mode):
         url_conf = 'https://heibox.uni-heidelberg.de/f/31a76b13ea27482981b4/?dl=1'
         url_ckpt = 'https://heibox.uni-heidelberg.de/f/578df07c8fc04ffbadf3/?dl=1'
 
+        if not os.path.isdir(f'{model_path}/superres'):
+            os.makedirs(f'{model_path}/superres')
         path_conf = f'{model_path}/superres/project.yaml'
         path_ckpt = f'{model_path}/superres/last.ckpt'
 
