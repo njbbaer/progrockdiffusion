@@ -75,6 +75,10 @@ model_512_downloaded = False
 model_secondary_downloaded = False
 
 import sys
+if sys.platform == 'win32':
+    import ssl
+    ssl._create_default_https_context = ssl._create_unverified_context
+
 from dataclasses import dataclass
 from functools import partial
 import cv2
@@ -1277,11 +1281,15 @@ def download_models(mode):
         path_conf = f'{model_path}/superres/project.yaml'
         path_ckpt = f'{model_path}/superres/last.ckpt'
 
-        download_url(url_conf, path_conf)
-        download_url(url_ckpt, path_ckpt)
+        if os.path.exists(path_conf) and os.path.exists(path_ckpt):
+            print("Superres models already downloaded, skipping...")
+        else:
+            print("Superres models downloading, this might take a while...")
+            urllib.request.urlretrieve(url_conf, path_conf)
+            urllib.request.urlretrieve(url_ckpt, path_ckpt)
 
-        path_conf = path_conf + '/?dl=1' # fix it
-        path_ckpt = path_ckpt + '/?dl=1' # fix it
+        #path_conf = path_conf + '/?dl=1' # fix it
+        #path_ckpt = path_ckpt + '/?dl=1' # fix it
         return path_conf, path_ckpt
 
     else:

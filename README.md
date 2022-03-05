@@ -9,11 +9,15 @@ This author has an RTX 3080 with 10gb and it runs fairly well, but some advanced
 You'll also need between 20 and 40gb of free disk space, depending on which models you enable.
 
 # Software prerequisties
-Ubuntu 20.04 (A docker environment, VM, or Windows Subsystem for Linux should work provided it can access your GPU).
-Note that Windows Subsystem for Linux (WSL) has only been successful on Windows 11 using WSL2, due to Nvidia driver integration.
+## Linux
+Ubuntu 20.04 or similar (A docker environment, VM, or Windows Subsystem for Linux should work provided it can access your GPU).
 
-CUDA 11.4 (installation instructions can be found here: https://developer.nvidia.com/cuda-11-4-1-download-archive). Note that this seems to be working out of the box on WSL2 for Windows 11.
+CUDA 11.4+ (installation instructions can be found here: https://developer.nvidia.com/cuda-11-4-1-download-archive).
 
+## Windows
+Windows 10 or 11 with NVIDIA drivers installed (other versions may work but are untested)
+
+## Test NVIDIA drivers
 You can test that your environment is working properly by running:
 
 ```
@@ -24,25 +28,32 @@ The output should indicate a driver version, CUDA version, and so on. If you get
 
 # First time setup
 
-## Update Ubuntu 20.04 packages
+## **Linux** Update Ubuntu 20.04 packages
 ```
 sudo apt update
 sudo apt upgrade -y
 ```
 
-## Download Anaconda (python env manager) installer
+## Download and install Anaconda
+### **Linux**
 ```
 wget https://repo.anaconda.com/archive/Anaconda3-2021.11-Linux-x86_64.sh
 ```
 
-## Install Anaconda
+Install Anaconda
 ```
 bash Anaconda3-2021.11-Linux-x86_64.sh
 respond 'yes' to accept license terms and provide install dir when prompted
 respond 'yes' to run conda initialization
 ```
 
-## Logout and back in for the changes to take effect
+### **Windows**
+```
+Download from here and install: https://www.anaconda.com/products/individual
+```
+
+## **Linux** Logout and back in for the changes to take effect
+## **Windows** From the start menu, open a "Anaconda Powershell Prompt" (*Powershell* is important)
 
 ## Create prog rock diffusion env
 ```
@@ -50,12 +61,13 @@ conda create --name progrockdiffusion python=3.7
 conda activate progrockdiffusion
 ```
 
+Now change to whatever base directory you want ProgRockDiffusion to go into.
 ## Clone the prog rock diffusion repo
 ```
 git clone https://github.com/lowfuel/progrockdiffusion.git
 cd progrockdiffusion
 ```
-Note: the "cd" command above is important, as the next steps will add additional libraries and data to ProgRockDiffusion
+**Note: the "cd" command above is important, as the next steps will add additional libraries and data to ProgRockDiffusion**
 
 ## Install the required libraries and tools
 ```
@@ -69,19 +81,32 @@ pip install -e ./CLIP
 pip install -e ./guided-diffusion
 pip install -e ./taming-transformers
 pip install lpips datetime timm
+```
+## Install PyTorch
+### **Linux**
+```
 pip install https://download.pytorch.org/whl/cu111/torch-1.10.0%2Bcu111-cp37-cp37m-linux_x86_64.whl
 pip install https://download.pytorch.org/whl/cu111/torchaudio-0.10.0%2Bcu111-cp37-cp37m-linux_x86_64.whl
 pip install https://download.pytorch.org/whl/cu111/torchvision-0.11.1%2Bcu111-cp37-cp37m-linux_x86_64.whl
+```
+## **Windows**
+```
+pip install torch==1.10.2+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html
+pip install torchvision==0.11.3+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html
+pip install torchaudio==0.10.2+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html
+```
+## Install remaining libraries and tools
+```
 pip install ipywidgets omegaconf pytorch_lightning einops
 pip install matplotlib pandas
 conda install opencv
 ```
-Depending on your platform, you may get an error about libGL.so.1
+**Linux** Depending on your Linux platform, you may get an error about libGL.so.1
 If you do, try installing these dependencies:
 ```
 sudo apt-get install ffmpeg libsm6 libxext6 -y
 ```
-Finally:
+**Linux** Finally:
 ```
 sudo apt install imagemagick
 ```
