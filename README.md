@@ -52,8 +52,10 @@ respond 'yes' to run conda initialization
 Download from here and install: https://www.anaconda.com/products/individual
 ```
 
-## **Linux** Logout and back in for the changes to take effect
-## **Windows** From the start menu, open a "Anaconda Powershell Prompt" (*Powershell* is important)
+## **Linux**
+Logout and back in for the changes to take effect
+## **Windows**
+From the start menu, open a "Anaconda Powershell Prompt" (*Powershell* is important)
 
 ## Create prog rock diffusion env
 ```
@@ -116,6 +118,12 @@ sudo apt install imagemagick
 NOTE: On your first run it might appear to hang. Let it go for a good while, though, as it might just be downloading models.
 Somtimes there is no feedback during the download process (why? Who knows)
 
+If you've opened a new terminal or powershell prompt, you may need to activate your ProgRockDiffusion session again:
+```
+conda activate progrockdiffusion
+```
+
+Now you're ready!
 
 ```
 usage: python3 prd.py [-h] [-s SETTINGS] [-o OUTPUT] [-p PROMPT]
