@@ -28,33 +28,27 @@ The output should indicate a driver version, CUDA version, and so on. If you get
 
 # First time setup
 
-## **Linux** Update Ubuntu 20.04 packages
+**[Linux]** Update Ubuntu 20.04 packages
 ```
 sudo apt update
 sudo apt upgrade -y
 ```
 
 ## Download and install Anaconda
-### **Linux**
+**[Linux]**
 ```
 wget https://repo.anaconda.com/archive/Anaconda3-2021.11-Linux-x86_64.sh
-```
-
-Install Anaconda
-```
 bash Anaconda3-2021.11-Linux-x86_64.sh
 respond 'yes' to accept license terms and provide install dir when prompted
 respond 'yes' to run conda initialization
 ```
+Logout and back in for the changes to take effect
 
-### **Windows**
+
+**[Windows]**
 ```
 Download from here and install: https://www.anaconda.com/products/individual
 ```
-
-## **Linux**
-Logout and back in for the changes to take effect
-## **Windows**
 From the start menu, open a "Anaconda Powershell Prompt" (*Powershell* is important)
 
 ## Create prog rock diffusion env
@@ -85,13 +79,13 @@ pip install -e ./taming-transformers
 pip install lpips datetime timm
 ```
 ## Install PyTorch
-### **Linux**
+**[Linux]**
 ```
 pip install https://download.pytorch.org/whl/cu111/torch-1.10.0%2Bcu111-cp37-cp37m-linux_x86_64.whl
 pip install https://download.pytorch.org/whl/cu111/torchaudio-0.10.0%2Bcu111-cp37-cp37m-linux_x86_64.whl
 pip install https://download.pytorch.org/whl/cu111/torchvision-0.11.1%2Bcu111-cp37-cp37m-linux_x86_64.whl
 ```
-## **Windows**
+**[Windows]**
 ```
 pip install torch==1.10.2+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html
 pip install torchvision==0.11.3+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html
@@ -103,12 +97,12 @@ pip install ipywidgets omegaconf pytorch_lightning einops
 pip install matplotlib pandas
 conda install opencv
 ```
-**Linux** Depending on your Linux platform, you may get an error about libGL.so.1
+**[Linux]** Depending on your Linux platform, you may get an error about libGL.so.1
 If you do, try installing these dependencies:
 ```
 sudo apt-get install ffmpeg libsm6 libxext6 -y
 ```
-**Linux** Finally:
+**[Linux]** Finally:
 ```
 sudo apt install imagemagick
 ```
@@ -124,6 +118,8 @@ conda activate progrockdiffusion
 ```
 
 Now you're ready!
+
+**Note: On windows you'll type "python" instead of "python3" in the commands below.**
 
 ```
 usage: python3 prd.py [-h] [-s SETTINGS] [-o OUTPUT] [-p PROMPT]
@@ -169,4 +165,4 @@ Simply edit the settings.json file provided, or copy it and make several that in
 # TODO
 
 - The SLIP models are currently failing due to a variable not being defined.
-- Native Windows support
+- Fix windows usage examples to say "python" instead of "python3"
