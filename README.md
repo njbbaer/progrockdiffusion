@@ -164,5 +164,4 @@ Simply edit the settings.json file provided, or copy it and make several that in
 
 # TODO
 
-- The SLIP models are currently failing due to a variable not being defined.
 - Fix windows usage examples to say "python" instead of "python3"
