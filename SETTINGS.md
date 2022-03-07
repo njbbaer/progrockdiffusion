@@ -44,6 +44,8 @@ This document hopes to explain what the various settings are. Some of them we're
 | **RN50** | true | Enable or disable the VitB32 CLIP model. Med memory, med accuracy
 | **RN50x4** | false | Enable or disable the VitB32 CLIP model. High memory, high accuracy
 | **RN50x16** | false | Enable or disable the VitB32 CLIP model. Very high memory, high accuracy
+| **SLIPB16** | false | Enable or disable the SLIPB16 CLIP model. High memory, weird accuracy
+| **SLIPL16** | false | Enable or disable the SLIPL16 CLIP model. Very high memory, unknown accuracy
 | **cut_overview** | "[12]\*400+[4]\*600" | How many "big picture" passes to do. More towards the start, less later, is the general idea
 | **cut_innercut** | "[4]\*400+[12]\*600" | Conversely, how many detail passes to do. Fewer at the start, then get more detailed
 | **cut_ic_pow** | 1 | Anyone? Beuller?

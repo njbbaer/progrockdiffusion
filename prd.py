@@ -75,6 +75,10 @@ model_512_downloaded = False
 model_secondary_downloaded = False
 
 import sys
+if sys.platform == 'win32':
+    import ssl
+    ssl._create_default_https_context = ssl._create_unverified_context
+
 from dataclasses import dataclass
 from functools import partial
 import cv2
@@ -99,9 +103,10 @@ from tqdm.notebook import tqdm
 sys.path.append(f'{root_path}/ResizeRight')
 sys.path.append(f'{root_path}/CLIP')
 sys.path.append(f'{root_path}/guided-diffusion')
+sys.path.append(f'{root_path}/SLIP')
 import clip
 from resize_right import resize
-# from models import SLIP_VITB16, SLIP, SLIP_VITL16
+from models import SLIP_VITB16, SLIP, SLIP_VITL16
 from guided_diffusion.script_util import create_model_and_diffusion, model_and_diffusion_defaults
 from datetime import datetime
 import numpy as np
@@ -209,6 +214,8 @@ RN101 = (settings_file['RN101'])
 RN50 = (settings_file['RN50'])
 RN50x4 = (settings_file['RN50x4'])
 RN50x16 = (settings_file['RN50x16'])
+SLIPB16 = (settings_file['SLIPB16'])
+SLIPL16 = (settings_file['SLIPL16'])
 cut_overview = (settings_file['cut_overview'])
 cut_innercut = (settings_file['cut_innercut'])
 cut_ic_pow = (settings_file['cut_ic_pow'])
@@ -909,6 +916,8 @@ def save_settings():
     'RN50': RN50,
     'RN50x4': RN50x4,
     'RN50x16': RN50x16,
+    'SLIPB16': SLIPB16,
+    'SLIPL16': SLIPL16,
     'cut_overview': str(cut_overview),
     'cut_innercut': str(cut_innercut),
     'cut_ic_pow': cut_ic_pow,
@@ -1274,14 +1283,20 @@ def download_models(mode):
         url_conf = 'https://heibox.uni-heidelberg.de/f/31a76b13ea27482981b4/?dl=1'
         url_ckpt = 'https://heibox.uni-heidelberg.de/f/578df07c8fc04ffbadf3/?dl=1'
 
+        if not os.path.isdir(f'{model_path}/superres'):
+            os.makedirs(f'{model_path}/superres')
         path_conf = f'{model_path}/superres/project.yaml'
         path_ckpt = f'{model_path}/superres/last.ckpt'
 
-        download_url(url_conf, path_conf)
-        download_url(url_ckpt, path_ckpt)
+        if os.path.exists(path_conf) and os.path.exists(path_ckpt):
+            print("Superres models already downloaded, skipping...")
+        else:
+            print("Superres models downloading, this might take a while...")
+            urllib.request.urlretrieve(url_conf, path_conf)
+            urllib.request.urlretrieve(url_ckpt, path_ckpt)
 
-        path_conf = path_conf + '/?dl=1' # fix it
-        path_ckpt = path_ckpt + '/?dl=1' # fix it
+        #path_conf = path_conf + '/?dl=1' # fix it
+        #path_ckpt = path_ckpt + '/?dl=1' # fix it
         return path_conf, path_ckpt
 
     else:
@@ -1628,8 +1643,8 @@ use_checkpoint = True #@param {type: 'boolean'}
 #RN50 = True #@param{type:"boolean"} Low RAM requirement, medium accuracy
 #RN50x4 = True #@param{type:"boolean"} Medium RAM requirement, high accuracy
 #RN50x16 = False #@param{type:"boolean"} High RAM requirement, high accuracy
-SLIPB16 = False # param{type:"boolean"}
-SLIPL16 = False # param{type:"boolean"}
+#SLIPB16 = False # param{type:"boolean"}
+#SLIPL16 = False # param{type:"boolean"}
 
 #@markdown If you're having issues with model downloads, check this to compare SHA's:
 check_model_SHA = False #@param{type:"boolean"}
@@ -1776,7 +1791,8 @@ if SLIPB16:
   SLIPB16model = SLIP_VITB16(ssl_mlp_dim=4096, ssl_emb_dim=256)
   if not os.path.exists(f'{model_path}/slip_base_100ep.pt'):
     #!wget https://dl.fbaipublicfiles.com/slip/slip_base_100ep.pt -P {model_path}
-    urllib.request.urlretrieve("https://dl.fbaipublicfiles.com/slip/slip_base_100ep.pt", model_path)
+    print('Downloading SLIP_VITB16 model, this might take a while...')
+    urllib.request.urlretrieve("https://dl.fbaipublicfiles.com/slip/slip_base_100ep.pt", model_path+'/slip_base_100ep.pt')
   sd = torch.load(f'{model_path}/slip_base_100ep.pt')
   real_sd = {}
   for k, v in sd['state_dict'].items():
@@ -1791,7 +1807,8 @@ if SLIPL16:
   SLIPL16model = SLIP_VITL16(ssl_mlp_dim=4096, ssl_emb_dim=256)
   if not os.path.exists(f'{model_path}/slip_large_100ep.pt'):
     #!wget https://dl.fbaipublicfiles.com/slip/slip_large_100ep.pt -P {model_path}
-    urllib.request.urlretrieve("https://dl.fbaipublicfiles.com/slip/slip_large_100ep.pt", model_path)
+    print('Downloading SLIP_VITL16 model, this might take a while...')
+    urllib.request.urlretrieve("https://dl.fbaipublicfiles.com/slip/slip_large_100ep.pt", model_path+'/slip_large_100ep.pt')
   sd = torch.load(f'{model_path}/slip_large_100ep.pt')
   real_sd = {}
   for k, v in sd['state_dict'].items():
