@@ -64,6 +64,7 @@ git clone https://github.com/lowfuel/progrockdiffusion.git
 cd progrockdiffusion
 ```
 **Note: the "cd" command above is important, as the next steps will add additional libraries and data to ProgRockDiffusion**
+
 **From here on out, this is the directory you'll want to be in when you use the program.**
 
 ## Install the required libraries and tools
