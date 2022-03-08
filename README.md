@@ -119,7 +119,7 @@ If you've opened a new terminal or powershell prompt, you may need to activate y
 conda activate progrockdiffusion
 ```
 
-Now you're ready!
+CD to the directory where you installed ProgRockDiffusion. Now you're ready!
 
 **Note: On windows you'll type "python" instead of "python3" in the commands below.**
 
