@@ -10,7 +10,7 @@ This document hopes to explain what the various settings are. Some of them we're
 | **display_rate** | 50 | How often (in steps) to update the progress.png image
 | **width** | 768 | Image output width in pixels - must be a multiple of 64
 | **height** | 448 | Image output height in pixels - must be a multiple of 64
-| **set_seed** | "random_seed" | If set to random_seed it will generate a new seed. Replace this with a specific number to elimate randomness in the start
+| **set_seed** | "random_seed" | If set to random_seed it will generate a new seed. Replace this with a specific number to elimate randomness in the start. Additional images in a batch are always the seed from the previous image - 1
 | **image_prompts** | {} | For using images instead of words for prompts. Not recommended.
 | **clip_guidance_scale** | 5000 | Controls how much the image should look like the prompt.
 | **tv_scale** | 0 | Controls the smoothness of the final output.
