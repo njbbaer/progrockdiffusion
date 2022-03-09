@@ -65,6 +65,8 @@ cd progrockdiffusion
 ```
 **Note: the "cd" command above is important, as the next steps will add additional libraries and data to ProgRockDiffusion**
 
+**From here on out, this is the directory you'll want to be in when you use the program.**
+
 ## Install the required libraries and tools
 ```
 git clone https://github.com/crowsonkb/guided-diffusion
@@ -117,7 +119,7 @@ If you've opened a new terminal or powershell prompt, you may need to activate y
 conda activate progrockdiffusion
 ```
 
-Now you're ready!
+CD to the directory where you installed ProgRockDiffusion. Now you're ready!
 
 **Note: On windows you'll type "python" instead of "python3" in the commands below.**
 
