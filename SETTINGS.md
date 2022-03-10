@@ -6,14 +6,14 @@ This document hopes to explain what the various settings are. Some of them we're
 | **batch_name** | "Default" | The directory within images_out to store your results
 | **text_prompts** | "The Big Sur Coast, by Asher Brown Durand, featured on ArtStation." | The phrase(s) to use for generating an image
 | **n_batches** | 1 | How many images to generate
-| **steps** | 500 | Generally, the more steps you run, the more detailed the results. At least 250 is recommended.
+| **steps** | 250 | Generally, the more steps you run, the more detailed the results, however the returns start to diminish after 350
 | **display_rate** | 50 | How often (in steps) to update the progress.png image
-| **width** | 768 | Image output width in pixels - must be a multiple of 64
-| **height** | 448 | Image output height in pixels - must be a multiple of 64
+| **width** | 832 | Image output width in pixels - must be a multiple of 64
+| **height** | 512 | Image output height in pixels - must be a multiple of 64
 | **set_seed** | "random_seed" | If set to random_seed it will generate a new seed. Replace this with a specific number to elimate randomness in the start. Additional images in a batch are always the seed from the previous image - 1
-| **image_prompts** | {} | For using images instead of words for prompts. Not recommended.
+| **image_prompts** | {} | For using images instead of words for prompts. Specifiy the file name of the init image.
 | **clip_guidance_scale** | 5000 | Controls how much the image should look like the prompt.
-| **tv_scale** | 0 | Controls the smoothness of the final output.
+| **tv_scale** | 0 | Controls the smoothness of the final output. tests have shown minimal impact when changing this.
 | **range_scale** | 150 | Controls how far out of range RGB values are allowed to be.
 | **sat_scale** | 0 | Controls how much saturation is allowed.
 | **cutn_batches** | 4 | Lowering this number can reduce how much memory is needed, however note that cutn itself is hard set at 16
