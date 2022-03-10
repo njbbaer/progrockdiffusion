@@ -32,7 +32,7 @@ This document hopes to explain what the various settings are. Some of them we're
 | **clamp_grad** | true | Experimental: Using adaptive clip grad in the cond_fn
 | **clamp_max** | 0.05 | Anyone? Beuller?
 | **fuzzy_prompt** | false | Controls whether to add multiple noisy prompts to the prompt losses
-| **rand_mag** | 0.05 | Controls the magnitude of the random noise - does not appear to be used unless either fuzzy_prompt is true, or an init image is used
+| **rand_mag** | 0.05 | Controls how far it can stray from your prompt - does not appear to be used unless either fuzzy_prompt is true, or an init image is used
 | **eta** | 0.8 | Has to do with how much the generator can stray from your prompt, apparently.
 | **diffusion_model** | "512x512_diffusion_uncond_finetune_008100",
 | **use_secondary_model** | true | Reduces memory and improves speed, potentially at a loss of quality
