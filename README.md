@@ -121,6 +121,18 @@ conda activate progrockdiffusion
 
 CD to the directory where you installed ProgRockDiffusion. Now you're ready!
 
+The simplest way to run it is:
+
+[Linux]
+```
+python3 prd.py
+```
+[Windows]
+```
+python prd.py
+```
+This will generate an image using the settings from "settings.json", which you could edit to adjust the defaults (or, better yet, make a copy of it and tell prd to use an alternative settings file using the command line arguments below).
+
 **Note: On windows you'll type "python" instead of "python3" in the commands below.**
 
 ```
