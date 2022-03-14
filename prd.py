@@ -277,6 +277,7 @@ elif torch.cuda.is_available():
       torch.backends.cudnn.enabled = False
 else:
     device = torch.device('cpu')
+    cl_args.cpu = True #even if it wasn't specified, we're using it because we're not on GPU
     fp16_mode = False
 
 print('Using device:', device)
