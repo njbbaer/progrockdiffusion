@@ -60,7 +60,7 @@ def createPath(filepath):
       os.makedirs(filepath)
       print(f'Made {filepath}')
     else:
-      print(f'filepath {filepath} exists.')
+      pass
 
 initDirPath = f'{root_path}/init_images'
 createPath(initDirPath)
@@ -74,10 +74,13 @@ model_256_downloaded = False
 model_512_downloaded = False
 model_secondary_downloaded = False
 
+python_example = "python3"
+
 import sys
 if sys.platform == 'win32':
     import ssl
     ssl._create_default_https_context = ssl._create_unverified_context
+    python_example = "python"
 
 from dataclasses import dataclass
 from functools import partial
@@ -139,21 +142,24 @@ warnings.filterwarnings("ignore", category=UserWarning)
 
 # Command Line parse
 import argparse
-example_text = '''Usage examples:
+example_text = f'''Usage examples:
 
 To simply use the 'Default' output directory and get settings from settings.json:
- python3 prd.py
+ {python_example} prd.py
 
 To use your own settings.json (note that putting it in quotes can help parse errors):
- python3 prd.py -s "some_directory/mysettings.json"
+ {python_example} prd.py -s "some_directory/mysettings.json"
 
 To use the 'Default' output directory and settings, but override the output name and prompt:
- python3 prd.py -p "A cool image of the author of this program" -o Coolguy
+ {python_example} prd.py -p "A cool image of the author of this program" -o Coolguy
 
 To use multiple prompts with optional weight values:
- python3 prd.py -p "A cool image of the author of this program" -p "Pale Blue Sky:.5"
+ {python_example} prd.py -p "A cool image of the author of this program" -p "Pale Blue Sky:.5"
 
 You can ignore the seed coming from a settings file by adding -i, resulting in a new random seed
+
+To force use of the CPU for image generation, add a -c or --cpu (warning: VERY slow):
+ {python_example} prd.py -c
 '''
 
 my_parser = argparse.ArgumentParser(prog='ProgRockDiffusion', description='Generate images from text prompts.', epilog=example_text, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -161,6 +167,7 @@ my_parser.add_argument('-s', '--settings', action='store', required=False, defau
 my_parser.add_argument('-o', '--output', action='store', required=False, help='What output directory to use within images_out')
 my_parser.add_argument('-p', '--prompt', action='append', required=False, help='Override the prompt')
 my_parser.add_argument('-i', '--ignoreseed', action='store_true', required=False, help='Ignores the random seed in the settings file')
+my_parser.add_argument('-c', '--cpu', action='store_true', required=False, default=False, help='Force use of CPU instead of GPU')
 
 cl_args = my_parser.parse_args()
 
@@ -241,13 +248,38 @@ if cl_args.ignoreseed:
     set_seed = 'random_seed'
     print(f'Using a random seed instead of the one provided by the JSON file.')
 
-import torch
-device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-print('Using device:', device)
+#Automatic Eta based on steps
+if eta == 'auto':
+    maxetasteps = 315
+    minetasteps = 50
+    maxeta = 1.0
+    mineta = 0.0
+    if steps > maxetasteps: eta = maxeta
+    elif steps < minetasteps: eta = mineta
+    else:
+        stepsrange = (maxetasteps - minetasteps)
+        newrange = (maxeta - mineta)
+        eta = (((steps - minetasteps) * newrange) / stepsrange) + mineta
+        eta = round(eta,2)
+        print(f'Eta set automatically to: {eta}')
 
-if torch.cuda.get_device_capability(device) == (8,0): ## A100 fix thanks to Emad
-  print('Disabling CUDNN for A100 gpu', file=sys.stderr)
-  torch.backends.cudnn.enabled = False
+import torch
+
+# Decide if we're using CPU or GPU, with appropriate settings depending...
+if cl_args.cpu:
+    device = torch.device('cpu')
+    fp16_mode = False
+elif torch.cuda.is_available():
+    device = torch.device('cuda:0')
+    fp16_mode = True
+    if torch.cuda.get_device_capability(device) == (8,0): ## A100 fix thanks to Emad
+      print('Disabling CUDNN for A100 gpu', file=sys.stderr)
+      torch.backends.cudnn.enabled = False
+else:
+    device = torch.device('cpu')
+    fp16_mode = False
+
+print('Using device:', device)
 
 #@title 2.2 Define necessary functions
 
@@ -1310,7 +1342,7 @@ def load_model_from_config(config, ckpt):
     sd = pl_sd["state_dict"]
     model = instantiate_from_config(config.model)
     m, u = model.load_state_dict(sd, strict=False)
-    model.cuda()
+    if not cl_args.cpu: model.cuda() #Can't do CUDA stuff when we're running on CPU
     model.eval()
     return {"model": model}, global_step
 
@@ -1746,7 +1778,7 @@ if diffusion_model == '512x512_diffusion_uncond_finetune_008100':
         'num_res_blocks': 2,
         'resblock_updown': True,
         'use_checkpoint': use_checkpoint,
-        'use_fp16': True,
+        'use_fp16': fp16_mode,
         'use_scale_shift_norm': True,
     })
 elif diffusion_model == '256x256_diffusion_uncond':
@@ -1764,7 +1796,7 @@ elif diffusion_model == '256x256_diffusion_uncond':
         'num_res_blocks': 2,
         'resblock_updown': True,
         'use_checkpoint': use_checkpoint,
-        'use_fp16': True,
+        'use_fp16': fp16_mode,
         'use_scale_shift_norm': True,
     })
 
