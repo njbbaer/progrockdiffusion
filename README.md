@@ -28,15 +28,11 @@ The output should indicate a driver version, CUDA version, and so on. If you get
 
 # First time setup
 
-**[Linux]** Update Ubuntu 20.04 packages
-```
-sudo apt update
-sudo apt upgrade -y
-```
-
 ## Download and install Anaconda
 **[Linux]**
 ```
+sudo apt update
+sudo apt upgrade -y
 wget https://repo.anaconda.com/archive/Anaconda3-2021.11-Linux-x86_64.sh
 bash Anaconda3-2021.11-Linux-x86_64.sh
 respond 'yes' to accept license terms and provide install dir when prompted
@@ -50,6 +46,18 @@ Logout and back in for the changes to take effect
 Download from here and install: https://www.anaconda.com/products/individual
 ```
 From the start menu, open a "Anaconda Powershell Prompt" (*Powershell* is important)
+
+**[MacOS]**
+Install Homebrew:
+```
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+Restart your terminal, then:
+```
+brew install miniforge
+conda init zsh
+```
+Restart your terminal again.
 
 ## Create prog rock diffusion env
 ```
@@ -80,7 +88,10 @@ pip install -e ./guided-diffusion
 pip install -e ./taming-transformers
 pip install lpips datetime timm
 ```
-## Install PyTorch
+## GPU Acceleration
+You defnitely should do this if you have an NVIDIA card. It's almost 30x faster. Otherwise, you can skip this section if you're planning to use CPU mode.
+
+### Install GPU accelerated PyTorch
 **[Linux]**
 ```
 pip install https://download.pytorch.org/whl/cu111/torch-1.10.0%2Bcu111-cp37-cp37m-linux_x86_64.whl
@@ -94,6 +105,13 @@ pip install torchvision==0.11.3+cu113 -f https://download.pytorch.org/whl/cu113/
 pip install torchaudio==0.10.2+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html
 ```
 ## Install remaining libraries and tools
+**[MacOS]**
+```
+export GRPC_PYTHON_BUILD_SYSTEM_OPENSSL=1
+export GRPC_PYTHON_BUILD_SYSTEM_ZLIB=1
+pip install grpcio
+```
+**[All Platforms]**
 ```
 pip install ipywidgets omegaconf pytorch_lightning einops
 pip install matplotlib pandas
@@ -168,6 +186,9 @@ Multiple prompts with weight values are supported:
  python3 prd.py -p "A cool image of the author of this program" -p "Pale Blue Sky:.5"
 
 You can ignore the seed coming from a settings file by adding -i, resulting in a new random seed
+
+To force use of the CPU for image generation, add a -c or --cpu (warning: VERY slow):
+ {python_example} prd.py -c
 ```
 Simply edit the settings.json file provided, or copy it and make several that include your favorite settings, if you wish to tweak the defaults.
 
