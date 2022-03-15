@@ -68,6 +68,8 @@ conda init zsh
 Restart your terminal again.
 
 ## Create prog rock diffusion env
+
+**[All Platforms]**
 ```
 conda create --name progrockdiffusion python=3.7
 conda activate progrockdiffusion
