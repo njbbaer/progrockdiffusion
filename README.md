@@ -2,7 +2,9 @@
 A command line version of [Disco Diffusion](https://github.com/alembics/disco-diffusion).
 
 # Hardware prerequisites
-An Nvidia GPU capable of running CUDA-based softare. 8gb is probably the minimum amount of GPU memory.
+You will need at least 16gb of RAM if not using a GPU.
+An Nvidia GPU is *highly* recommended! The speed improvement is massive.
+8gb is probably the minimum amount of GPU memory.
 
 This author has an RTX 3080 with 10gb and it runs fairly well, but some advanced features are not possible with "only" 10gb.
 
@@ -12,12 +14,17 @@ You'll also need between 20 and 40gb of free disk space, depending on which mode
 ## Linux
 Ubuntu 20.04 or similar (A docker environment, VM, or Windows Subsystem for Linux should work provided it can access your GPU).
 
-CUDA 11.4+ (installation instructions can be found here: https://developer.nvidia.com/cuda-11-4-1-download-archive).
+If using a GPU: CUDA 11.4+ (installation instructions can be found here: https://developer.nvidia.com/cuda-11-4-1-download-archive).
 
 ## Windows
-Windows 10 or 11 with NVIDIA drivers installed (other versions may work but are untested)
+Windows 10 or 11 (If using a GPU, NVIDIA drivers installed)
+Other versions may work but are untested
 
-## Test NVIDIA drivers
+## MacOS
+Minimal testing has been done with the latest MacOS on an M1 Macbook Air.
+PLEASE NOTE: GPU acceleration is not yet supported. It will work, but it will be *slow.*
+
+## If using an NVIDIA GPU, test NVIDIA drivers
 You can test that your environment is working properly by running:
 
 ```
@@ -28,15 +35,11 @@ The output should indicate a driver version, CUDA version, and so on. If you get
 
 # First time setup
 
-**[Linux]** Update Ubuntu 20.04 packages
-```
-sudo apt update
-sudo apt upgrade -y
-```
-
 ## Download and install Anaconda
 **[Linux]**
 ```
+sudo apt update
+sudo apt upgrade -y
 wget https://repo.anaconda.com/archive/Anaconda3-2021.11-Linux-x86_64.sh
 bash Anaconda3-2021.11-Linux-x86_64.sh
 respond 'yes' to accept license terms and provide install dir when prompted
@@ -51,9 +54,33 @@ Download from here and install: https://www.anaconda.com/products/individual
 ```
 From the start menu, open a "Anaconda Powershell Prompt" (*Powershell* is important)
 
+**[MacOS]**
+
+Install Homebrew:
+```
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+Restart your terminal, then:
+```
+brew install miniforge
+conda init zsh
+```
+Restart your terminal again.
+
 ## Create prog rock diffusion env
+
+**[Linux and Windows]**
 ```
 conda create --name progrockdiffusion python=3.7
+```
+
+**[MacOS]**
+```
+conda create --name progrockdiffusion python=3.8
+```
+
+**[All Platforms]**
+```
 conda activate progrockdiffusion
 ```
 
@@ -80,20 +107,32 @@ pip install -e ./guided-diffusion
 pip install -e ./taming-transformers
 pip install lpips datetime timm
 ```
-## Install PyTorch
-**[Linux]**
-```
-pip install https://download.pytorch.org/whl/cu111/torch-1.10.0%2Bcu111-cp37-cp37m-linux_x86_64.whl
-pip install https://download.pytorch.org/whl/cu111/torchaudio-0.10.0%2Bcu111-cp37-cp37m-linux_x86_64.whl
-pip install https://download.pytorch.org/whl/cu111/torchvision-0.11.1%2Bcu111-cp37-cp37m-linux_x86_64.whl
-```
-**[Windows]**
+## Basic or GPU Accelerated PyTorch
+You defnitely should install the GPU version if you have an NVIDIA card. It's almost 30x faster.
+Otherwise, you can install the CPU version instead (required for MacOS)
+
+### EITHER Install GPU accelerated PyTorch
 ```
 pip install torch==1.10.2+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html
 pip install torchvision==0.11.3+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html
 pip install torchaudio==0.10.2+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html
 ```
+
+### OR install the basic CPU version of PyTorch (warning - very slow!)
+```
+pip install torch==1.11.0+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html
+pip install torchvision==0.12.0+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html
+pip install torchaudio==0.11.0+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html
+```
+
 ## Install remaining libraries and tools
+**[MacOS]**
+```
+export GRPC_PYTHON_BUILD_SYSTEM_OPENSSL=1
+export GRPC_PYTHON_BUILD_SYSTEM_ZLIB=1
+pip install grpcio
+```
+**[All Platforms]**
 ```
 pip install ipywidgets omegaconf pytorch_lightning einops
 pip install matplotlib pandas
@@ -127,7 +166,7 @@ The simplest way to run it is:
 ```
 python3 prd.py
 ```
-[Windows]
+[Windows and MacOS]
 ```
 python prd.py
 ```
@@ -168,6 +207,9 @@ Multiple prompts with weight values are supported:
  python3 prd.py -p "A cool image of the author of this program" -p "Pale Blue Sky:.5"
 
 You can ignore the seed coming from a settings file by adding -i, resulting in a new random seed
+
+To force use of the CPU for image generation, add a -c or --cpu (warning: VERY slow):
+ {python_example} prd.py -c
 ```
 Simply edit the settings.json file provided, or copy it and make several that include your favorite settings, if you wish to tweak the defaults.
 
