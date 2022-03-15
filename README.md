@@ -2,7 +2,9 @@
 A command line version of [Disco Diffusion](https://github.com/alembics/disco-diffusion).
 
 # Hardware prerequisites
-An Nvidia GPU capable of running CUDA-based softare. 8gb is probably the minimum amount of GPU memory.
+You will need at least 16gb of RAM if not using a GPU.
+An Nvidia GPU is *highly* recommended! The speed improvement is massive.
+8gb is probably the minimum amount of GPU memory.
 
 This author has an RTX 3080 with 10gb and it runs fairly well, but some advanced features are not possible with "only" 10gb.
 
@@ -12,12 +14,17 @@ You'll also need between 20 and 40gb of free disk space, depending on which mode
 ## Linux
 Ubuntu 20.04 or similar (A docker environment, VM, or Windows Subsystem for Linux should work provided it can access your GPU).
 
-CUDA 11.4+ (installation instructions can be found here: https://developer.nvidia.com/cuda-11-4-1-download-archive).
+If using a GPU: CUDA 11.4+ (installation instructions can be found here: https://developer.nvidia.com/cuda-11-4-1-download-archive).
 
 ## Windows
-Windows 10 or 11 with NVIDIA drivers installed (other versions may work but are untested)
+Windows 10 or 11 (If using a GPU, NVIDIA drivers installed)
+Other versions may work but are untested
 
-## Test NVIDIA drivers
+## MacOS
+Minimal testing has been done with the latest MacOS on an M1 Macbook Air.
+PLEASE NOTE: GPU acceleration is not yet supported. It will work, but it will be *slow.*
+
+## If using an NVIDIA GPU, test NVIDIA drivers
 You can test that your environment is working properly by running:
 
 ```
