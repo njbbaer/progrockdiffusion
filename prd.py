@@ -269,6 +269,9 @@ import torch
 if cl_args.cpu:
     device = torch.device('cpu')
     fp16_mode = False
+    cores = os.cpu_count()
+    print(f'Detected {cores} cores for CPU mode.')
+    torch.set_num_threads(cores)
 elif torch.cuda.is_available():
     device = torch.device('cuda:0')
     fp16_mode = True
@@ -279,6 +282,9 @@ else:
     device = torch.device('cpu')
     cl_args.cpu = True #even if it wasn't specified, we're using it because we're not on GPU
     fp16_mode = False
+    cores = os.cpu_count()
+    print(f'Detected {cores} cores for CPU mode.')
+    torch.set_num_threads(cores)
 
 print('Using device:', device)
 
