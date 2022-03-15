@@ -71,7 +71,7 @@ Restart your terminal again.
 
 **[Linux and Windows]**
 ```
-conda create --name progrockdiffusion python=3.7
+conda create --name progrockdiffusion python=3.8
 ```
 
 **[MacOS]**
@@ -119,9 +119,8 @@ pip install https://download.pytorch.org/whl/cu111/torchvision-0.11.1%2Bcu111-cp
 ```
 **[Windows]**
 ```
-pip install torch==1.10.2+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html
-pip install torchvision==0.11.3+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html
-pip install torchaudio==0.10.2+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html
+pip install torch==1.11.0+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html
+pip install torchvision==0.12.0+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html
 ```
 ## Install remaining libraries and tools
 **[MacOS]**
