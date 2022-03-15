@@ -69,9 +69,18 @@ Restart your terminal again.
 
 ## Create prog rock diffusion env
 
-**[All Platforms]**
+**[Linux and Windows]**
 ```
 conda create --name progrockdiffusion python=3.7
+```
+
+**[MacOS]**
+```
+conda create --name progrockdiffusion python=3.8
+```
+
+**[All Platforms]**
+```
 conda activate progrockdiffusion
 ```
 
