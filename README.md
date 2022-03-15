@@ -55,6 +55,7 @@ Download from here and install: https://www.anaconda.com/products/individual
 From the start menu, open a "Anaconda Powershell Prompt" (*Powershell* is important)
 
 **[MacOS]**
+
 Install Homebrew:
 ```
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
