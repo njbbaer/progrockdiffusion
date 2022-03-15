@@ -164,7 +164,7 @@ The simplest way to run it is:
 ```
 python3 prd.py
 ```
-[Windows]
+[Windows and MacOS]
 ```
 python prd.py
 ```
