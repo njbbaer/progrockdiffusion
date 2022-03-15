@@ -71,7 +71,7 @@ Restart your terminal again.
 
 **[Linux and Windows]**
 ```
-conda create --name progrockdiffusion python=3.8
+conda create --name progrockdiffusion python=3.7
 ```
 
 **[MacOS]**
@@ -107,21 +107,24 @@ pip install -e ./guided-diffusion
 pip install -e ./taming-transformers
 pip install lpips datetime timm
 ```
-## GPU Acceleration
-You defnitely should do this if you have an NVIDIA card. It's almost 30x faster. Otherwise, you can skip this section if you're planning to use CPU mode.
+## Basic or GPU Accelerated PyTorch
+You defnitely should install the GPU version if you have an NVIDIA card. It's almost 30x faster.
+Otherwise, you can install the CPU version instead (required for MacOS)
 
-### Install GPU accelerated PyTorch
-**[Linux]**
+### EITHER Install GPU accelerated PyTorch
 ```
-pip install https://download.pytorch.org/whl/cu111/torch-1.10.0%2Bcu111-cp37-cp37m-linux_x86_64.whl
-pip install https://download.pytorch.org/whl/cu111/torchaudio-0.10.0%2Bcu111-cp37-cp37m-linux_x86_64.whl
-pip install https://download.pytorch.org/whl/cu111/torchvision-0.11.1%2Bcu111-cp37-cp37m-linux_x86_64.whl
+pip install torch==1.10.2+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html
+pip install torchvision==0.11.3+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html
+pip install torchaudio==0.10.2+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html
 ```
-**[Windows]**
+
+### OR install the basic CPU version of PyTorch (warning - very slow!)
 ```
-pip install torch==1.11.0+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html
-pip install torchvision==0.12.0+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html
+pip install torch==1.11.0+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html
+pip install torchvision==0.12.0+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html
+pip install torchaudio==0.11.0+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html
 ```
+
 ## Install remaining libraries and tools
 **[MacOS]**
 ```
