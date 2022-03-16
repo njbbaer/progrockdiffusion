@@ -12,7 +12,7 @@ This document hopes to explain what the various settings are. Some of them we're
 | **height** | 512 | Image output height in pixels - must be a multiple of 64
 | **set_seed** | "random_seed" | If set to random_seed it will generate a new seed. Replace this with a specific number to elimate randomness in the start. Additional images in a batch are always the seed from the previous image - 1
 | **image_prompts** | {} | For using images instead of words for prompts. Specifiy the file name of the init image.
-| **clip_guidance_scale** | 5000 | Controls how much the image should look like the prompt.
+| **clip_guidance_scale** | "auto" | Controls how much the image should look like the prompt. Affected by resolution, so "auto" will try to calculate a good value.
 | **tv_scale** | 0 | Controls the smoothness of the final output. tests have shown minimal impact when changing this.
 | **range_scale** | 150 | Controls how far out of range RGB values are allowed to be.
 | **sat_scale** | 0 | Controls how much saturation is allowed.
@@ -30,10 +30,10 @@ This document hopes to explain what the various settings are. Some of them we're
 | **randomize_class** | true | Controls whether the imagenet class is randomly changed each iteration
 | **clip_denoised** | false | Determines whether CLIP discriminates a noisy or denoised image
 | **clamp_grad** | true | Experimental: Using adaptive clip grad in the cond_fn
-| **clamp_max** | 0.05 | Anyone? Beuller?
+| **clamp_max** | "auto" | Lower values (0.01) can help keep colors muted. Higher values (0.25) allow for more vibrancy. However it is affected by steps, so "auto" will try to calculate a good value.
 | **fuzzy_prompt** | false | Controls whether to add multiple noisy prompts to the prompt losses
-| **rand_mag** | 0.05 | Controls how far it can stray from your prompt - does not appear to be used unless either fuzzy_prompt is true, or an init image is used
-| **eta** | 0.8 | Has to do with how much the generator can stray from your prompt, apparently.
+| **rand_mag** | 0.05 | Controls how far it can stray from your prompt - not used unless either fuzzy_prompt is true, or an init image is used
+| **eta** | "auto" | Has to do with how much the generator can stray from your prompt. Affected by steps, so "auto" will calculate a good value.
 | **diffusion_model** | "512x512_diffusion_uncond_finetune_008100",
 | **use_secondary_model** | true | Reduces memory and improves speed, potentially at a loss of quality
 | **diffusion_steps** | 1000 | Note: The code seems to calculate this no matter what you put in, so might as well leave it

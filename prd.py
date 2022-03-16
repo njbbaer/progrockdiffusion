@@ -160,6 +160,9 @@ You can ignore the seed coming from a settings file by adding -i, resulting in a
 
 To force use of the CPU for image generation, add a -c or --cpu (warning: VERY slow):
  {python_example} prd.py -c
+
+To generate a checkpoint image at 20% steps, for use as an init image in future runs, add -g or --geninit:
+ {python_example} prd.py -g
 '''
 
 my_parser = argparse.ArgumentParser(prog='ProgRockDiffusion', description='Generate images from text prompts.', epilog=example_text, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -168,6 +171,7 @@ my_parser.add_argument('-o', '--output', action='store', required=False, help='W
 my_parser.add_argument('-p', '--prompt', action='append', required=False, help='Override the prompt')
 my_parser.add_argument('-i', '--ignoreseed', action='store_true', required=False, help='Ignores the random seed in the settings file')
 my_parser.add_argument('-c', '--cpu', action='store_true', required=False, default=False, help='Force use of CPU instead of GPU')
+my_parser.add_argument('-g', '--geninit', action='store_true', required=False, default=False, help='Save a partial image at 20%, for use as later init image')
 
 cl_args = my_parser.parse_args()
 
@@ -248,6 +252,9 @@ if cl_args.ignoreseed:
     set_seed = 'random_seed'
     print(f'Using a random seed instead of the one provided by the JSON file.')
 
+if cl_args.geninit:
+    geninit = True
+    print('Geninit mode enabled. A checkpoint image will be saved at 20% of steps.')
 #Automatic Eta based on steps
 if eta == 'auto':
     maxetasteps = 315
@@ -262,6 +269,33 @@ if eta == 'auto':
         eta = (((steps - minetasteps) * newrange) / stepsrange) + mineta
         eta = round(eta,2)
         print(f'Eta set automatically to: {eta}')
+
+#Automatic clamp_max based on steps
+if clamp_max == 'auto':
+    if steps <= 35: clamp_max = 0.01
+    elif steps <= 75: clamp_max = 0.0125
+    elif steps <= 150: clamp_max = 0.015
+    elif steps <= 225: clamp_max = 0.025
+    elif steps <= 300: clamp_max = 0.05
+    elif steps <= 450: clamp_max = 0.1
+    else: clamp_max = 0.25
+    print(f'Clamp_max automatically set to {clamp_max}')
+
+#Automatic clip_guidance_scale based on overall resolution
+if clip_guidance_scale == 'auto':
+    res = width_height[0] * width_height[1] # total pixels
+    maxcgsres = 2000000
+    mincgsres = 250000
+    maxcgs = 50000
+    mincgs = 2500
+    if res > maxcgsres: clip_guidance_scale = maxcgs
+    elif res < mincgsres: clip_guidance_scale = mincgs
+    else:
+        resrange = (maxcgsres - mincgsres)
+        newrange = (maxcgs- mincgs)
+        clip_guidance_scale = (((res - mincgsres) * newrange) / resrange) + mincgs
+        clip_guidance_scale = round(clip_guidance_scale)
+    print(f'clip_guidance_scale set automatically to: {clip_guidance_scale}')
 
 import torch
 
@@ -2138,8 +2172,8 @@ else:
 """
 
 #@markdown ####**Saving:**
-
 intermediate_saves = 0#@param{type: 'raw'}
+if geninit: intermediate_saves = [(steps*0.2)] # Save a checkpoint at 20% for use as a later init image
 intermediates_in_subfolder = True #@param{type: 'boolean'}
 #@markdown Intermediate steps will save a copy at your specified intervals. You can either format it as a single integer or a list of specific steps
 
