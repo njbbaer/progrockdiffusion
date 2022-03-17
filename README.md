@@ -213,6 +213,12 @@ To force use of the CPU for image generation, add a -c or --cpu (warning: VERY s
 ```
 Simply edit the settings.json file provided, or copy it and make several that include your favorite settings, if you wish to tweak the defaults.
 
+# Troubleshooting
+## If you get an error about pandas needing a different verison of numpy, you can try:
+```
+pip install --force-reinstall numpy
+```
+
 # Notes
 
 - Currently Superres Sampling doesn't work, it will crash.
@@ -220,4 +226,4 @@ Simply edit the settings.json file provided, or copy it and make several that in
 
 # TODO
 
-- Fix windows usage examples to say "python" instead of "python3"
+- Get Animations working
