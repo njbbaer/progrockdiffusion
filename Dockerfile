@@ -1,7 +1,8 @@
 FROM nvidia/cuda:11.6.0-runtime-ubuntu20.04
 
 RUN echo "This dockerfile is GPU only, and needs you to nominate the GPUs to" && \
-    echo "run.  The common form is 'docker build . --gpus all -t dockerdiffusion' ." && \
+    echo "run.  The common form is 'docker build . -t dockerdiffusion' and" && \
+    echo "'docker run dockerdiffusion --gpus all'" && \
     echo "" && \
     echo "Updating the base" && \
     apt update && \
