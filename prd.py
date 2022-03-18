@@ -1434,7 +1434,8 @@ def load_model_from_config(config, ckpt):
     sd = pl_sd["state_dict"]
     model = instantiate_from_config(config.model)
     m, u = model.load_state_dict(sd, strict=False)
-    if not cl_args.cpu: model.cuda() #Can't do CUDA stuff when we're running on CPU
+    #if not cl_args.cpu: model.cuda() #Can't do CUDA stuff when we're running on CPU
+    model.to(device)
     model.eval()
     return {"model": model}, global_step
 
