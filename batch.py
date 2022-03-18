@@ -44,6 +44,8 @@ def apply_settings(new_settings):
 
 
 def upscale(filepath):
+    if not os.path.exists(TEMP_DIR):
+        os.mkdir(TEMP_DIR)
     img = cv2.imread(filepath, 1)
     scaled_img = cv2.resize(img, (0, 0), fx=2, fy=2)
     cv2.imwrite(TEMP_DIR + '/upscaled.png', scaled_img)
