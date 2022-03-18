@@ -99,13 +99,13 @@ cd progrockdiffusion
 git clone https://github.com/crowsonkb/guided-diffusion
 git clone https://github.com/openai/CLIP.git
 git clone https://github.com/assafshocher/ResizeRight.git
-git clone https://github.com/facebookresearch/SLIP.git
 git clone https://github.com/CompVis/latent-diffusion.git
 git clone https://github.com/CompVis/taming-transformers
 pip install -e ./CLIP
 pip install -e ./guided-diffusion
 pip install -e ./taming-transformers
-pip install lpips datetime timm
+pip install lpips datetime timm ftfy
+pip install fvcore iopath
 ```
 ## Basic or GPU Accelerated PyTorch
 You defnitely should install the GPU version if you have an NVIDIA card. It's almost 30x faster.
@@ -134,7 +134,7 @@ pip install grpcio
 ```
 **[All Platforms]**
 ```
-pip install ipywidgets omegaconf pytorch_lightning einops
+pip install ipywidgets omegaconf>=2.0.0 pytorch-lightning>=1.0.8 torch-fidelity einops wandb
 pip install matplotlib pandas
 conda install opencv
 ```
