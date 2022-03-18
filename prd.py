@@ -255,6 +255,9 @@ if cl_args.ignoreseed:
 if cl_args.geninit:
     geninit = True
     print('Geninit mode enabled. A checkpoint image will be saved at 20% of steps.')
+else:
+    geninit = False
+    
 #Automatic Eta based on steps
 if eta == 'auto':
     maxetasteps = 315
@@ -272,13 +275,13 @@ if eta == 'auto':
 
 #Automatic clamp_max based on steps
 if clamp_max == 'auto':
-    if steps <= 35: clamp_max = 0.01
-    elif steps <= 75: clamp_max = 0.0125
-    elif steps <= 150: clamp_max = 0.015
-    elif steps <= 225: clamp_max = 0.025
-    elif steps <= 300: clamp_max = 0.05
-    elif steps <= 450: clamp_max = 0.1
-    else: clamp_max = 0.25
+    if steps <= 35: clamp_max = 0.001
+    elif steps <= 75: clamp_max = 0.005
+    elif steps <= 150: clamp_max = 0.01
+    elif steps <= 225: clamp_max = 0.015
+    elif steps <= 300: clamp_max = 0.025
+    elif steps <= 500: clamp_max = 0.075
+    else: clamp_max = 0.1
     print(f'Clamp_max automatically set to {clamp_max}')
 
 #Automatic clip_guidance_scale based on overall resolution
