@@ -722,7 +722,7 @@ def do_run():
           np.random.seed(seed)
           random.seed(seed)
           torch.manual_seed(seed)
-          torch.cuda.manual_seed_all(seed)
+          #torch.cuda.manual_seed_all(seed) # jason -- commented this out because the above handles it and is device agnostic
           torch.backends.cudnn.deterministic = True
 
       target_embeds, weights = [], []
@@ -756,7 +756,8 @@ def do_run():
 
                 if args.fuzzy_prompt:
                     for i in range(25):
-                        model_stat["target_embeds"].append((txt + torch.randn(txt.shape).cuda() * args.rand_mag).clamp(0,1))
+                        #model_stat["target_embeds"].append((txt + torch.randn(txt.shape).cuda() * args.rand_mag).clamp(0,1)) - jason: removed trying to make this device agnostic
+                        model_stat["target_embeds"].append((txt + torch.randn(txt.shape).to(device) * args.rand_mag).clamp(0,1))
                         model_stat["weights"].append(weight)
                 else:
                     model_stat["target_embeds"].append(txt)
@@ -772,7 +773,8 @@ def do_run():
                   embed = clip_model.encode_image(normalize(batch)).float()
                   if fuzzy_prompt:
                       for i in range(25):
-                          model_stat["target_embeds"].append((embed + torch.randn(embed.shape).cuda() * rand_mag).clamp(0,1))
+                          #model_stat["target_embeds"].append((embed + torch.randn(embed.shape).cuda() * rand_mag).clamp(0,1)) - jason: removed trying to make this device agnostic
+                          model_stat["target_embeds"].append((embed + torch.randn(embed.shape).to(device) * rand_mag).clamp(0,1))
                           weights.extend([weight / cutn] * cutn)
                   else:
                       model_stat["target_embeds"].append(embed)
@@ -1049,16 +1051,6 @@ def save_settings():
     'zoom': zoom,
     'translation_x': translation_x,
     'translation_y': translation_y,
-    'translation_z': translation_z,
-    'rotation_3d_x': rotation_3d_x,
-    'rotation_3d_y': rotation_3d_y,
-    'rotation_3d_z': rotation_3d_z,
-    'midas_depth_model': midas_depth_model,
-    'midas_weight': midas_weight,
-    'near_plane': near_plane,
-    'far_plane': far_plane,
-    'fov': fov,
-    'padding_mode': padding_mode,
     'video_init_path':video_init_path,
     'extract_nth_frame':extract_nth_frame,
   }
@@ -2188,70 +2180,12 @@ if key_frames:
         )
         translation_y = f"0: ({translation_y})"
         translation_y_series = get_inbetweens(parse_key_frames(translation_y))
-    try:
-        translation_z_series = get_inbetweens(parse_key_frames(translation_z))
-    except RuntimeError as e:
-        print(
-            "WARNING: You have selected to use key frames, but you have not "
-            "formatted `translation_z` correctly for key frames.\n"
-            "Attempting to interpret `translation_z` as "
-            f'"0: ({translation_z})"\n'
-            "Please read the instructions to find out how to use key frames "
-            "correctly.\n"
-        )
-        translation_z = f"0: ({translation_z})"
-        translation_z_series = get_inbetweens(parse_key_frames(translation_z))
-    try:
-        rotation_3d_x_series = get_inbetweens(parse_key_frames(rotation_3d_x))
-    except RuntimeError as e:
-        print(
-            "WARNING: You have selected to use key frames, but you have not "
-            "formatted `rotation_3d_x` correctly for key frames.\n"
-            "Attempting to interpret `rotation_3d_x` as "
-            f'"0: ({rotation_3d_x})"\n'
-            "Please read the instructions to find out how to use key frames "
-            "correctly.\n"
-        )
-        rotation_3d_x = f"0: ({rotation_3d_x})"
-        rotation_3d_x_series = get_inbetweens(parse_key_frames(rotation_3d_x))
-
-    try:
-        rotation_3d_y_series = get_inbetweens(parse_key_frames(rotation_3d_y))
-    except RuntimeError as e:
-        print(
-            "WARNING: You have selected to use key frames, but you have not "
-            "formatted `rotation_3d_y` correctly for key frames.\n"
-            "Attempting to interpret `rotation_3d_y` as "
-            f'"0: ({rotation_3d_y})"\n'
-            "Please read the instructions to find out how to use key frames "
-            "correctly.\n"
-        )
-        rotation_3d_y = f"0: ({rotation_3d_y})"
-        rotation_3d_y_series = get_inbetweens(parse_key_frames(rotation_3d_y))
-
-    try:
-        rotation_3d_z_series = get_inbetweens(parse_key_frames(rotation_3d_z))
-    except RuntimeError as e:
-        print(
-            "WARNING: You have selected to use key frames, but you have not "
-            "formatted `rotation_3d_z` correctly for key frames.\n"
-            "Attempting to interpret `rotation_3d_z` as "
-            f'"0: ({rotation_3d_z})"\n'
-            "Please read the instructions to find out how to use key frames "
-            "correctly.\n"
-        )
-        rotation_3d_z = f"0: ({rotation_3d_z})"
-        rotation_3d_z_series = get_inbetweens(parse_key_frames(rotation_3d_z))
 
 else:
     angle = float(angle)
     zoom = float(zoom)
     translation_x = float(translation_x)
     translation_y = float(translation_y)
-    translation_z = float(translation_z)
-    rotation_3d_x = float(rotation_3d_x)
-    rotation_3d_y = float(rotation_3d_y)
-    rotation_3d_z = float(rotation_3d_z)
 """### Extra Settings
  Partial Saves, Diffusion Sharpening, Advanced Settings, Cutn Scheduling
 """
@@ -2445,25 +2379,10 @@ args = {
     'zoom': zoom,
     'translation_x': translation_x,
     'translation_y': translation_y,
-    'translation_z': translation_z,
-    'rotation_3d_x': rotation_3d_x,
-    'rotation_3d_y': rotation_3d_y,
-    'rotation_3d_z': rotation_3d_z,
-    'midas_depth_model': midas_depth_model,
-    'midas_weight': midas_weight,
-    'near_plane': near_plane,
-    'far_plane': far_plane,
-    'fov': fov,
-    'padding_mode': padding_mode,
-    'other_sampling_mode': other_sampling_mode,
     'angle_series':angle_series,
     'zoom_series':zoom_series,
     'translation_x_series':translation_x_series,
     'translation_y_series':translation_y_series,
-    'translation_z_series':translation_z_series,
-    'rotation_3d_x_series':rotation_3d_x_series,
-    'rotation_3d_y_series':rotation_3d_y_series,
-    'rotation_3d_z_series':rotation_3d_z_series,
     'frames_scale': frames_scale,
     'calc_frames_skip_steps': calc_frames_skip_steps,
     'skip_step_ratio': skip_step_ratio,
