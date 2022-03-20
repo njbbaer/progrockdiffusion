@@ -133,7 +133,7 @@ pip install grpcio
 ```
 **[All Platforms]**
 ```
-pip install ipywidgets omegaconf>=2.0.0 pytorch-lightning>=1.0.8 torch-fidelity einops wandb
+pip install ipywidgets omegaconf pytorch_lightning einops
 pip install matplotlib pandas
 conda install opencv
 ```
