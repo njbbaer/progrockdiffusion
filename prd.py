@@ -82,7 +82,8 @@ if sys.platform == 'win32':
     ssl._create_default_https_context = ssl._create_unverified_context
     python_example = "python"
 
-os.environ['KMP_DUPLICATE_LIB_OK']='TRUE'
+#Uncomment the below line if you're getting an error about OMP: Error #15.
+#os.environ['KMP_DUPLICATE_LIB_OK']='TRUE'
 
 from dataclasses import dataclass
 from functools import partial
