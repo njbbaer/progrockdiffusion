@@ -99,7 +99,6 @@ cd progrockdiffusion
 git clone https://github.com/crowsonkb/guided-diffusion
 git clone https://github.com/openai/CLIP.git
 git clone https://github.com/assafshocher/ResizeRight.git
-git clone https://github.com/facebookresearch/SLIP.git
 git clone https://github.com/CompVis/latent-diffusion.git
 git clone https://github.com/CompVis/taming-transformers
 pip install -e ./CLIP
@@ -191,6 +190,15 @@ Optional arguments:
                         Override the prompt
   -i, --ignoreseed
                         Use a random seed instead of what is in your settings file
+
+  -c, --cpu CORES
+                        Force CPU mode, and (optionally) specify how many threads to run.
+
+  -g, --geninit:
+                        Will save an image called geninit.png at 20% of overall steps, for use below:
+
+  -u, --useinit:
+                        Forces use of geninit.png as an init_image starting at 20% of defined steps.
 
 Usage examples:
 
