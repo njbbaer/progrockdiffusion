@@ -218,6 +218,14 @@ Simply edit the settings.json file provided, or copy it and make several that in
 ```
 pip install --force-reinstall numpy
 ```
+## If you are getting "OMP: Error #15: Initializing libiomp5md.dll, but found libiomp5md.dll already initialized"
+This seems to be because of a Pytorch compiling bug for Intel CPUs. 
+You can set an environment variable that will fix this, either on your machine (if you know how to do that), or by editing prd.py.
+To do it by editing prd.py, find the line that says "import os" and add the following right below it:
+```
+os.environ['KMP_DUPLICATE_LIB_OK']='True'
+```
+
 ## Switch between GPU and CPU modes
 Let's assume you installed the GPU version. You can adjust these instructions if you did CPU first, of course.
 Clone your existing conda environment:
