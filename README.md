@@ -213,6 +213,30 @@ To force use of the CPU for image generation, add a -c or --cpu (warning: VERY s
 ```
 Simply edit the settings.json file provided, or copy it and make several that include your favorite settings, if you wish to tweak the defaults.
 
+# Tips and Troubleshooting
+## If you get an error about pandas needing a different verison of numpy, you can try:
+```
+pip install --force-reinstall numpy
+```
+## Switch between GPU and CPU modes
+Let's assume you installed the GPU version. You can adjust these instructions if you did CPU first, of course.
+Clone your existing conda environment:
+```
+conda create --name prdcpu --clone progrockdiffusion
+conda activate prdcpu
+```
+Now install the CPU version of pytorch:
+```
+pip install torch==1.11.0+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html
+pip install torchvision==0.12.0+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html
+pip install torchaudio==0.11.0+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html
+```
+All set! You can now switch between the two by simply doing:
+```
+conda activate progrockdiffusion
+conda activate prdcpu
+```
+
 # Notes
 
 - Currently Superres Sampling doesn't work, it will crash.
@@ -220,4 +244,4 @@ Simply edit the settings.json file provided, or copy it and make several that in
 
 # TODO
 
-- Fix windows usage examples to say "python" instead of "python3"
+- Get Animations working
