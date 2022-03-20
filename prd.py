@@ -69,8 +69,6 @@ createPath(outDirPath)
 
 model_path = f'{root_path}/models'
 createPath(model_path)
-pretrained_path = f'{root_path}/pretrained'
-createPath(pretrained_path)
 
 model_256_downloaded = False
 model_512_downloaded = False
@@ -356,12 +354,6 @@ print('Using device:', device)
 
 from os.path import exists
 
-if not exists(f'{model_path}/AdaBins_nyu.pt'):
-    print("Downloading AdaBins model. This might take a while...")
-    urllib.request.urlretrieve("https://github.com/intel-isl/DPT/releases/download/1_0/dpt_large-midas-2f21e586.pt", model_path + '/AdaBins_nyu.pt')
-    shutil.copyfile(f"{model_path}/AdaBins_nyu.pt", f"{root_path}/pretrained/AdaBins_nyu.pt")
-
-
 #@title 2.2 Define necessary functions
 
 # https://gist.github.com/adefossez/0646dbe9ed4005480a2407c62aac8869
@@ -646,9 +638,6 @@ stop_on_next_loop = False  # Make sure GPU memory doesn't get corrupted from can
 def do_run():
   seed = args.seed
   print(range(args.start_frame, args.max_frames))
-  if (args.animation_mode == "3D") and (args.midas_weight > 0.0):
-       midas_model, midas_transform, midas_net_w, midas_net_h, midas_resize_mode, midas_normalization = init_midas_depth_model(args.midas_depth_model)
-
   for frame_num in range(args.start_frame, args.max_frames):
       if stop_on_next_loop:
         break
@@ -970,6 +959,8 @@ def do_run():
                             image.save(f'{batchFolder}/{filename}')
                           if geninit is True:
                               image.save('geninit.png')
+                              raise KeyboardInterrupt
+
                       if cur_t == -1:
                         if frame_num == 0:
                           save_settings()

@@ -104,8 +104,7 @@ git clone https://github.com/CompVis/taming-transformers
 pip install -e ./CLIP
 pip install -e ./guided-diffusion
 pip install -e ./taming-transformers
-pip install lpips datetime timm ftfy
-pip install fvcore iopath
+pip install lpips datetime timm
 ```
 ## Basic or GPU Accelerated PyTorch
 You defnitely should install the GPU version if you have an NVIDIA card. It's almost 30x faster.
@@ -191,6 +190,15 @@ Optional arguments:
                         Override the prompt
   -i, --ignoreseed
                         Use a random seed instead of what is in your settings file
+
+  -c, --cpu CORES
+                        Force CPU mode, and (optionally) specify how many threads to run.
+
+  -g, --geninit:
+                        Will save an image called geninit.png at 20% of overall steps, for use below:
+
+  -u, --useinit:
+                        Forces use of geninit.png as an init_image starting at 20% of defined steps.
 
 Usage examples:
 
