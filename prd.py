@@ -143,6 +143,62 @@ from omegaconf import OmegaConf
 import warnings
 warnings.filterwarnings("ignore", category=UserWarning)
 
+# Setting default values for everything, which can then be overridden by settings files.
+batch_name = "Default"
+text_prompts = "No prompt in the file, by Sir Digby Chicken Caeser"
+image_prompts = {}
+clip_guidance_scale = "auto"
+tv_scale = 0
+range_scale = 150
+sat_scale = 0
+n_batches = 1
+display_rate = 50
+cutn_batches = 4
+max_frames = 10000
+interp_spline = "Linear"
+init_image = None
+init_scale = 1000
+skip_steps = 0
+frames_scale = 1500
+frames_skip_steps = "60%"
+perlin_init = False
+perlin_mode = "mixed"
+skip_augs = False
+randomize_class = True
+clip_denoised = False
+clamp_grad = True
+clamp_max = "auto"
+set_seed = "random_seed"
+fuzzy_prompt = False
+rand_mag = 0.05
+eta = "auto"
+width_height = [832, 512]
+diffusion_model = "512x512_diffusion_uncond_finetune_008100"
+use_secondary_model = True
+steps = 250
+sampling_mode = "ddim"
+diffusion_steps = 1000
+ViTB32 = True
+ViTB16 = True
+ViTL14 = False
+RN101 = False
+RN50 = True
+RN50x4 = False
+RN50x16 = False
+RN50x64 = False
+cut_overview = "[12]*400+[4]*600"
+cut_innercut = "[4]*400+[12]*600"
+cut_ic_pow = 1
+cut_icgray_p = "[0.2]*400+[0]*600"
+key_frames = True
+angle = "0:(0)"
+zoom = "0: (1), 10: (1.05)"
+translation_x = "0: (0)"
+translation_y = "0: (0)"
+video_init_path = "/content/training.mp4"
+extract_nth_frame = 2
+
+
 # Command Line parse
 import argparse
 example_text = f'''Usage examples:
@@ -152,6 +208,9 @@ To simply use the 'Default' output directory and get settings from settings.json
 
 To use your own settings.json (note that putting it in quotes can help parse errors):
  {python_example} prd.py -s "some_directory/mysettings.json"
+
+Note that multiple settings files are allowed. They're parsed in order. The values present are applied over any previous value:
+ {python_example} prd.py -s "some_directory/mysettings.json" -s "highres.json"
 
 To use the 'Default' output directory and settings, but override the output name and prompt:
  {python_example} prd.py -p "A cool image of the author of this program" -o Coolguy
@@ -170,84 +229,97 @@ To generate a checkpoint image at 20% steps, for use as an init image in future 
 To use a checkpoint image at 20% steps add -u or --useinit:
  {python_example} prd.py -u
 
+To specify which CUDA device to use (advanced) by device ID (default is 0):
+ {python_example} prd.py --cuda 1
+
 '''
 
 my_parser = argparse.ArgumentParser(prog='ProgRockDiffusion', description='Generate images from text prompts.', epilog=example_text, formatter_class=argparse.RawDescriptionHelpFormatter)
-my_parser.add_argument('-s', '--settings', action='store', required=False, default='settings.json', help='A settings JSON file to use, best to put in quotes')
+my_parser.add_argument('-s', '--settings', action='append', required=False, default=['settings.json'], help='A settings JSON file to use, best to put in quotes. Multiples are allowed and layered in order.')
 my_parser.add_argument('-o', '--output', action='store', required=False, help='What output directory to use within images_out')
 my_parser.add_argument('-p', '--prompt', action='append', required=False, help='Override the prompt')
 my_parser.add_argument('-i', '--ignoreseed', action='store_true', required=False, help='Ignores the random seed in the settings file')
 my_parser.add_argument('-c', '--cpu', type=int, nargs='?', action='store', required=False, default=False, const=0, help='Force use of CPU instead of GPU, and how many threads to run')
-my_parser.add_argument('-g', '--geninit', action='store_true', required=False, default=False, help='Save a partial image at 20%, for use as later init image')
+my_parser.add_argument('-g', '--geninit', type=int, nargs='?', action='store', required=False, default=False, const=0.2, help='Save a partial image at the specified percent of steps (1 to 99), for use as later init image')
 my_parser.add_argument('-u', '--useinit', action='store_true', required=False, default=False, help='Use the specified init image')
+my_parser.add_argument('--cuda', action='store', required=False, default='0', help='Which GPU to use. Default is 0.')
 
 cl_args = my_parser.parse_args()
 
-# Load the JSON config file
-try:
-    with open(cl_args.settings,'r') as json_file:
-        settings_file = json.load(json_file)
-except Exception as e:
-    print('Failed to open or parse ' + cl_args.settings + ' - Check formatting.')
-    print(e)
-    quit()
+# Simple check to see if a key is present in the settings file
+def is_json_key_present(json, key):
+    try:
+        buf = json[key]
+    except KeyError:
+        return False
 
-# Set all of the settings from the specified file
-batch_name = (settings_file['batch_name'])
-text_prompts = (settings_file['text_prompts'])
-image_prompts = (settings_file['image_prompts'])
-clip_guidance_scale = (settings_file['clip_guidance_scale'])
-tv_scale = (settings_file['tv_scale'])
-range_scale = (settings_file['range_scale'])
-sat_scale = (settings_file['sat_scale'])
-n_batches = (settings_file['n_batches'])
-display_rate = (settings_file['display_rate'])
-cutn_batches = (settings_file['cutn_batches'])
-max_frames = (settings_file['max_frames'])
-interp_spline = (settings_file['interp_spline'])
-init_image = (settings_file['init_image'])
-init_scale = (settings_file['init_scale'])
-skip_steps = (settings_file['skip_steps'])
-frames_scale = (settings_file['frames_scale'])
-frames_skip_steps = (settings_file['frames_skip_steps'])
-perlin_init = (settings_file['perlin_init'])
-perlin_mode = (settings_file['perlin_mode'])
-skip_augs = (settings_file['skip_augs'])
-randomize_class = (settings_file['randomize_class'])
-clip_denoised = (settings_file['clip_denoised'])
-clamp_grad = (settings_file['clamp_grad'])
-clamp_max = (settings_file['clamp_max'])
-set_seed = (settings_file['set_seed'])
-fuzzy_prompt = (settings_file['fuzzy_prompt'])
-rand_mag = (settings_file['rand_mag'])
-eta = (settings_file['eta'])
-width_height = [(settings_file['width']), (settings_file['height'])]
-diffusion_model = (settings_file['diffusion_model'])
-use_secondary_model = (settings_file['use_secondary_model'])
-steps = (settings_file['steps'])
-sampling_mode = (settings_file['sampling_mode'])
-diffusion_steps = (settings_file['diffusion_steps'])
-ViTB32 = (settings_file['ViTB32'])
-ViTB16 = (settings_file['ViTB16'])
-ViTL14 = (settings_file['ViTL14'])
-RN101 = (settings_file['RN101'])
-RN50 = (settings_file['RN50'])
-RN50x4 = (settings_file['RN50x4'])
-RN50x16 = (settings_file['RN50x16'])
-RN50x64 = (settings_file['RN50x64'])
-#SLIPB16 = (settings_file['SLIPB16'])
-#SLIPL16 = (settings_file['SLIPL16'])
-cut_overview = (settings_file['cut_overview'])
-cut_innercut = (settings_file['cut_innercut'])
-cut_ic_pow = (settings_file['cut_ic_pow'])
-cut_icgray_p = (settings_file['cut_icgray_p'])
-key_frames = (settings_file['key_frames'])
-angle = (settings_file['angle'])
-zoom = (settings_file['zoom'])
-translation_x = (settings_file['translation_x'])
-translation_y = (settings_file['translation_y'])
-video_init_path = (settings_file['video_init_path'])
-extract_nth_frame = (settings_file['extract_nth_frame'])
+    return True
+
+# Load the JSON config files
+print(cl_args.settings)
+for setting_arg in cl_args.settings:
+    try:
+        with open(setting_arg,'r') as json_file:
+            print(f'Parsing {setting_arg}')
+            settings_file = json.load(json_file)
+            # If any of these around in this settings file they'll be applied, overwriting any previous value.
+            if is_json_key_present(settings_file,'batch_name'): batch_name = (settings_file['batch_name'])
+            if is_json_key_present(settings_file,'text_prompts'): text_prompts = (settings_file['text_prompts'])
+            if is_json_key_present(settings_file,'image_prompts'): image_prompts = (settings_file['image_prompts'])
+            if is_json_key_present(settings_file,'clip_guidance_scale'): clip_guidance_scale = (settings_file['clip_guidance_scale'])
+            if is_json_key_present(settings_file,'tv_scale'): tv_scale = (settings_file['tv_scale'])
+            if is_json_key_present(settings_file,'range_scale'): range_scale = (settings_file['range_scale'])
+            if is_json_key_present(settings_file,'sat_scale'): sat_scale = (settings_file['sat_scale'])
+            if is_json_key_present(settings_file,'n_batches'): n_batches = (settings_file['n_batches'])
+            if is_json_key_present(settings_file,'display_rate'): display_rate = (settings_file['display_rate'])
+            if is_json_key_present(settings_file,'cutn_batches'): cutn_batches = (settings_file['cutn_batches'])
+            if is_json_key_present(settings_file,'max_frames'): max_frames = (settings_file['max_frames'])
+            if is_json_key_present(settings_file,'interp_spline'): interp_spline = (settings_file['interp_spline'])
+            if is_json_key_present(settings_file,'init_image'): init_image = (settings_file['init_image'])
+            if is_json_key_present(settings_file,'init_scale'): init_scale = (settings_file['init_scale'])
+            if is_json_key_present(settings_file,'skip_steps'): skip_steps = (settings_file['skip_steps'])
+            if is_json_key_present(settings_file,'frames_scale'): frames_scale = (settings_file['frames_scale'])
+            if is_json_key_present(settings_file,'frames_skip_steps'): frames_skip_steps = (settings_file['frames_skip_steps'])
+            if is_json_key_present(settings_file,'perlin_init'): perlin_init = (settings_file['perlin_init'])
+            if is_json_key_present(settings_file,'perlin_mode'): perlin_mode = (settings_file['perlin_mode'])
+            if is_json_key_present(settings_file,'skip_augs'): skip_augs = (settings_file['skip_augs'])
+            if is_json_key_present(settings_file,'randomize_class'): randomize_class = (settings_file['randomize_class'])
+            if is_json_key_present(settings_file,'clip_denoised'): clip_denoised = (settings_file['clip_denoised'])
+            if is_json_key_present(settings_file,'clamp_grad'): clamp_grad = (settings_file['clamp_grad'])
+            if is_json_key_present(settings_file,'clamp_max'): clamp_max = (settings_file['clamp_max'])
+            if is_json_key_present(settings_file,'set_seed'): set_seed = (settings_file['set_seed'])
+            if is_json_key_present(settings_file,'fuzzy_prompt'): fuzzy_prompt = (settings_file['fuzzy_prompt'])
+            if is_json_key_present(settings_file,'rand_mag'): rand_mag = (settings_file['rand_mag'])
+            if is_json_key_present(settings_file,'eta'): eta = (settings_file['eta'])
+            if is_json_key_present(settings_file,'width'): width_height = [(settings_file['width']), (settings_file['height'])]
+            if is_json_key_present(settings_file,'diffusion_model'): diffusion_model = (settings_file['diffusion_model'])
+            if is_json_key_present(settings_file,'use_secondary_model'): use_secondary_model = (settings_file['use_secondary_model'])
+            if is_json_key_present(settings_file,'steps'): steps = (settings_file['steps'])
+            if is_json_key_present(settings_file,'sampling_mode'): sampling_mode = (settings_file['sampling_mode'])
+            if is_json_key_present(settings_file,'diffusion_steps'): diffusion_steps = (settings_file['diffusion_steps'])
+            if is_json_key_present(settings_file,'ViTB32'): ViTB32 = (settings_file['ViTB32'])
+            if is_json_key_present(settings_file,'ViTB16'): ViTB16 = (settings_file['ViTB16'])
+            if is_json_key_present(settings_file,'ViTL14'): ViTL14 = (settings_file['ViTL14'])
+            if is_json_key_present(settings_file,'RN101'): RN101 = (settings_file['RN101'])
+            if is_json_key_present(settings_file,'RN50'): RN50 = (settings_file['RN50'])
+            if is_json_key_present(settings_file,'RN50x4'): RN50x4 = (settings_file['RN50x4'])
+            if is_json_key_present(settings_file,'RN50x16'): RN50x16 = (settings_file['RN50x16'])
+            if is_json_key_present(settings_file,'RN50x64'): RN50x64 = (settings_file['RN50x64'])
+            if is_json_key_present(settings_file,'cut_overview'): cut_overview = (settings_file['cut_overview'])
+            if is_json_key_present(settings_file,'cut_innercut'): cut_innercut = (settings_file['cut_innercut'])
+            if is_json_key_present(settings_file,'cut_ic_pow'): cut_ic_pow = (settings_file['cut_ic_pow'])
+            if is_json_key_present(settings_file,'cut_icgray_p'): cut_icgray_p = (settings_file['cut_icgray_p'])
+            if is_json_key_present(settings_file,'key_frames'): key_frames = (settings_file['key_frames'])
+            if is_json_key_present(settings_file,'angle'): angle = (settings_file['angle'])
+            if is_json_key_present(settings_file,'zoom'): zoom = (settings_file['zoom'])
+            if is_json_key_present(settings_file,'translation_x'): translation_x = (settings_file['translation_x'])
+            if is_json_key_present(settings_file,'translation_y'): translation_y = (settings_file['translation_y'])
+            if is_json_key_present(settings_file,'video_init_path'): video_init_path = (settings_file['video_init_path'])
+            if is_json_key_present(settings_file,'extract_nth_frame'): extract_nth_frame = (settings_file['extract_nth_frame'])
+    except Exception as e:
+        print('Failed to open or parse ' + setting_arg + ' - Check formatting.')
+        print(e)
+        quit()
 
 #Now override some depending on command line and maybe a special case
 if cl_args.output:
@@ -264,12 +336,17 @@ if cl_args.ignoreseed:
 
 if cl_args.geninit:
     geninit = True
-    print('GenInit mode enabled. A checkpoint image will be saved at 20% of steps.')
+    if cl_args.geninit > 0 and cl_args.geninit <= 100:
+        geninitamount = float(cl_args.geninit / 100) # turn it into a float percent
+        print(f'GenInit mode enabled. A checkpoint image will be saved at {cl_args.geninit}% of steps.')
+    else:
+        geninitamount = 0.2
+        print(f'GenInit mode enabled. Provided number was out of bounds, so using {geninitamount} of steps instead.')
 else:
     geninit = False
 
 if cl_args.useinit:
-    if skip_steps == 0: skip_steps = (int(steps * 0.2)) # don't change skip_steps if the settings file specified one
+    if skip_steps == 0: skip_steps = (int(steps * 0.33)) # don't change skip_steps if the settings file specified one
     if path.exists(f'{cl_args.useinit}'):
         useinit = True
         init_image = cl_args.useinit
@@ -344,7 +421,7 @@ if cl_args.cpu or not torch.cuda.is_available():
         print(f'Using {cores} cores for CPU mode.')
     torch.set_num_threads(cores)
 else:
-    DEVICE = torch.device('cuda:0')
+    DEVICE = torch.device(f'cuda:{cl_args.cuda}')
     device = DEVICE
     fp16_mode = True
     if torch.cuda.get_device_capability(device) == (8,0): ## A100 fix thanks to Emad
@@ -2185,7 +2262,7 @@ else:
 
 #@markdown ####**Saving:**
 intermediate_saves = 0#@param{type: 'raw'}
-if geninit: intermediate_saves = [(steps*0.2)] # Save a checkpoint at 20% for use as a later init image
+if geninit: intermediate_saves = [(steps * geninitamount)] # Save a checkpoint at 20% for use as a later init image
 intermediates_in_subfolder = True #@param{type: 'boolean'}
 #@markdown Intermediate steps will save a copy at your specified intervals. You can either format it as a single integer or a list of specific steps
 
