@@ -184,6 +184,7 @@ Optional arguments:
   -h, --help            show this help message and exit
   -s SETTINGS, --settings SETTINGS
                         A settings JSON file to use, best to put in quotes
+                        Can be specified more than once to layer settings on top of one another
   -o OUTPUT, --output OUTPUT
                         What output directory to use within images_out
   -p PROMPT, --prompt PROMPT
@@ -194,8 +195,11 @@ Optional arguments:
   -c, --cpu CORES
                         Force CPU mode, and (optionally) specify how many threads to run.
 
-  -g, --geninit:
-                        Will save an image called geninit.png at 20% of overall steps, for use below:
+  --cuda DEVICE-ID
+                        Specify which CUDA device ID to use for rendering (default: 0).
+
+  -g PERCENT, --geninit PERCENT:
+                        Will save an image called geninit.png at PERCENT of overall steps, for use with --useinit
 
   -u, --useinit:
                         Forces use of geninit.png as an init_image starting at 20% of defined steps.
@@ -220,7 +224,11 @@ Multiple prompts with weight values are supported:
 You can ignore the seed coming from a settings file by adding -i, resulting in a new random seed
 
 To force use of the CPU for image generation, add a -c or --cpu (warning: VERY slow):
- {python_example} prd.py -c
+ python3 prd.py -c
+
+To specify which CUDA device to use (advanced) by device ID (default is 0):
+ python3 prd.py --cuda 1
+
 ```
 Simply edit the settings.json file provided, or copy it and make several that include your favorite settings, if you wish to tweak the defaults.
 

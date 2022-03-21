@@ -229,6 +229,9 @@ To generate a checkpoint image at 20% steps, for use as an init image in future 
 To use a checkpoint image at 20% steps add -u or --useinit:
  {python_example} prd.py -u
 
+To specify which CUDA device to use (advanced) by device ID (default is 0):
+ {python_example} prd.py --cuda 1
+
 '''
 
 my_parser = argparse.ArgumentParser(prog='ProgRockDiffusion', description='Generate images from text prompts.', epilog=example_text, formatter_class=argparse.RawDescriptionHelpFormatter)
