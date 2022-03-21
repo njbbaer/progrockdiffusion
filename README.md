@@ -208,6 +208,9 @@ To use the Default output directory and settings from settings.json:
 To use your own settings.json file (note that putting it in quotes can help parse errors):
  python3 prd.py -s "some_directory/mysettings.json"
 
+Note that multiple settings files are allowed. They're parsed in order. The values present are applied over any previous value:
+ python3 prd.py -s "some_directory/mysettings.json" -s "highres.json"
+
 To quickly just override the output directory name and the prompt:
  python3 prd.py -p "A cool image of the author of this program" -o Coolguy
 
