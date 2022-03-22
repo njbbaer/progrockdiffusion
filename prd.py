@@ -379,10 +379,10 @@ if eta == 'auto':
 #Automatic clamp_max based on steps
 if clamp_max == 'auto':
     if steps <= 35: clamp_max = 0.001
-    elif steps <= 75: clamp_max = 0.005
-    elif steps <= 150: clamp_max = 0.01
-    elif steps <= 225: clamp_max = 0.015
-    elif steps <= 300: clamp_max = 0.025
+    elif steps <= 75: clamp_max = 0.0125
+    elif steps <= 150: clamp_max = 0.02
+    elif steps <= 225: clamp_max = 0.035
+    elif steps <= 300: clamp_max = 0.05
     elif steps <= 500: clamp_max = 0.075
     else: clamp_max = 0.1
     print(f'Clamp_max automatically set to {clamp_max}')
