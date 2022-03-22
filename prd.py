@@ -256,7 +256,6 @@ def is_json_key_present(json, key):
     return True
 
 # Load the JSON config files
-print(cl_args.settings)
 for setting_arg in cl_args.settings:
     try:
         with open(setting_arg,'r') as json_file:
