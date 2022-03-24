@@ -252,8 +252,27 @@ def is_json_key_present(json, key):
         buf = json[key]
     except KeyError:
         return False
-
     return True
+
+#A simple way to ensure values are in an accceptable range, and also return a random value if desired
+def clampval(minval, val, maxval):
+    if val == "random":
+        try:
+            val = random.randint(minval, maxval)
+        except:
+            val = random.uniform(minval, maxval)
+        return val
+    #Auto is handled later, so we just return it back as is
+    elif val == "auto":
+        return val
+    elif val < minval:
+        val = minval
+        return val
+    elif val > maxval:
+        val = maxval
+        return val
+    else:
+        return val
 
 # Load the JSON config files
 for setting_arg in cl_args.settings:
@@ -262,13 +281,14 @@ for setting_arg in cl_args.settings:
             print(f'Parsing {setting_arg}')
             settings_file = json.load(json_file)
             # If any of these around in this settings file they'll be applied, overwriting any previous value.
+            # Some are passed by clampval first to make sure they are within bounds (or randomized if desired)
             if is_json_key_present(settings_file,'batch_name'): batch_name = (settings_file['batch_name'])
             if is_json_key_present(settings_file,'text_prompts'): text_prompts = (settings_file['text_prompts'])
             if is_json_key_present(settings_file,'image_prompts'): image_prompts = (settings_file['image_prompts'])
-            if is_json_key_present(settings_file,'clip_guidance_scale'): clip_guidance_scale = (settings_file['clip_guidance_scale'])
-            if is_json_key_present(settings_file,'tv_scale'): tv_scale = (settings_file['tv_scale'])
-            if is_json_key_present(settings_file,'range_scale'): range_scale = (settings_file['range_scale'])
-            if is_json_key_present(settings_file,'sat_scale'): sat_scale = (settings_file['sat_scale'])
+            if is_json_key_present(settings_file,'clip_guidance_scale'): clip_guidance_scale = clampval(1500, (settings_file['clip_guidance_scale']), 100000)
+            if is_json_key_present(settings_file,'tv_scale'): tv_scale = clampval(0, (settings_file['tv_scale']), 1000)
+            if is_json_key_present(settings_file,'range_scale'): range_scale = clampval(0, (settings_file['range_scale']), 1000)
+            if is_json_key_present(settings_file,'sat_scale'): sat_scale = clampval(0, (settings_file['sat_scale']), 20000)
             if is_json_key_present(settings_file,'n_batches'): n_batches = (settings_file['n_batches'])
             if is_json_key_present(settings_file,'display_rate'): display_rate = (settings_file['display_rate'])
             if is_json_key_present(settings_file,'cutn_batches'): cutn_batches = (settings_file['cutn_batches'])
@@ -285,11 +305,11 @@ for setting_arg in cl_args.settings:
             if is_json_key_present(settings_file,'randomize_class'): randomize_class = (settings_file['randomize_class'])
             if is_json_key_present(settings_file,'clip_denoised'): clip_denoised = (settings_file['clip_denoised'])
             if is_json_key_present(settings_file,'clamp_grad'): clamp_grad = (settings_file['clamp_grad'])
-            if is_json_key_present(settings_file,'clamp_max'): clamp_max = (settings_file['clamp_max'])
+            if is_json_key_present(settings_file,'clamp_max'): clamp_max = clampval(0.001, (settings_file['clamp_max']), 0.1)
             if is_json_key_present(settings_file,'set_seed'): set_seed = (settings_file['set_seed'])
             if is_json_key_present(settings_file,'fuzzy_prompt'): fuzzy_prompt = (settings_file['fuzzy_prompt'])
-            if is_json_key_present(settings_file,'rand_mag'): rand_mag = (settings_file['rand_mag'])
-            if is_json_key_present(settings_file,'eta'): eta = (settings_file['eta'])
+            if is_json_key_present(settings_file,'rand_mag'): rand_mag = clampval(0.0, (settings_file['rand_mag']), 0.999)
+            if is_json_key_present(settings_file,'eta'): eta = clampval(0.0, (settings_file['eta']), 0.999)
             if is_json_key_present(settings_file,'width'): width_height = [(settings_file['width']), (settings_file['height'])]
             if is_json_key_present(settings_file,'diffusion_model'): diffusion_model = (settings_file['diffusion_model'])
             if is_json_key_present(settings_file,'use_secondary_model'): use_secondary_model = (settings_file['use_secondary_model'])
@@ -306,7 +326,7 @@ for setting_arg in cl_args.settings:
             if is_json_key_present(settings_file,'RN50x64'): RN50x64 = (settings_file['RN50x64'])
             if is_json_key_present(settings_file,'cut_overview'): cut_overview = (settings_file['cut_overview'])
             if is_json_key_present(settings_file,'cut_innercut'): cut_innercut = (settings_file['cut_innercut'])
-            if is_json_key_present(settings_file,'cut_ic_pow'): cut_ic_pow = (settings_file['cut_ic_pow'])
+            if is_json_key_present(settings_file,'cut_ic_pow'): cut_ic_pow = clampval(0.5, (settings_file['cut_ic_pow']), 100)
             if is_json_key_present(settings_file,'cut_icgray_p'): cut_icgray_p = (settings_file['cut_icgray_p'])
             if is_json_key_present(settings_file,'key_frames'): key_frames = (settings_file['key_frames'])
             if is_json_key_present(settings_file,'angle'): angle = (settings_file['angle'])

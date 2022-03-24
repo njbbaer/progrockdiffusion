@@ -1,5 +1,6 @@
 # What do all the settings do?
 This document hopes to explain what the various settings are. Some of them we're still figuring out. :)
+Note that a few of the settings can be randomly chosen -- see the section below for details.
 
 | *Setting name* | *Default in settings.json* | *Explanation*
 | -------------------------|------------------------|:---
@@ -57,3 +58,15 @@ This document hopes to explain what the various settings are. Some of them we're
 | **translation_y** | "0: (0)" | Animation stuff...
 | **video_init_path** | "/content/training.mp4"| Animation stuff...
 | **extract_nth_frame** | 2 | Animation stuff...
+
+## Randomizable settings
+The following settings can be set to "random" (with the quotes), which will tell the code to pick a random value within their expected boundaries:
+
+**clip_guidance_scale**
+**tv_scale**
+**range_scale**
+**sat_scale**
+**clamp_max**
+**rand_mag**
+**eta**
+**cut_ic_pow**
