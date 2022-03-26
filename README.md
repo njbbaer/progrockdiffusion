@@ -230,15 +230,22 @@ To specify which CUDA device to use (advanced) by device ID (default is 0):
  python3 prd.py --cuda 1
 
 ```
-Simply edit the settings.json file provided, or copy it and make several that include your favorite settings, if you wish to tweak the defaults.
+Simply edit the settings.json file provided, or BETTER YET copy it and make several that include your favorite settings.
+*Note that multiple settings files can be specified in your command*, and they'll be loaded in order.
+Settings.json is **always loaded**, and any specified after that are layered on top (they only need to contain the settings you want to tweak).
+For example you could have a settings file that just contains a higher width, height, and more steps, for when you want to make a high-quality image.
+Layer that on top of your regular settings and it will apply those values without changing anything else.
 
 # Tips and Troubleshooting
+## Get a random artist
+In your prompt, if you use \_artist\_ instead of an artists name, an artist will be picked at random from artists.txt
+
 ## If you get an error about pandas needing a different verison of numpy, you can try:
 ```
 pip install --force-reinstall numpy
 ```
 ## If you are getting "OMP: Error #15: Initializing libiomp5md.dll, but found libiomp5md.dll already initialized"
-This seems to be because of a Pytorch compiling bug for Intel CPUs. 
+This seems to be because of a Pytorch compiling bug for Intel CPUs.
 You can set an environment variable that will fix this, either on your machine (if you know how to do that), or by editing prd.py.
 To do it by editing prd.py, find the line that says "import os" and add the following right below it:
 ```

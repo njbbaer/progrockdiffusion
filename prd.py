@@ -197,7 +197,7 @@ translation_x = "0: (0)"
 translation_y = "0: (0)"
 video_init_path = "/content/training.mp4"
 extract_nth_frame = 2
-
+intermediate_saves = 0
 
 # Command Line parse
 import argparse
@@ -335,6 +335,7 @@ for setting_arg in cl_args.settings:
             if is_json_key_present(settings_file,'translation_y'): translation_y = (settings_file['translation_y'])
             if is_json_key_present(settings_file,'video_init_path'): video_init_path = (settings_file['video_init_path'])
             if is_json_key_present(settings_file,'extract_nth_frame'): extract_nth_frame = (settings_file['extract_nth_frame'])
+            if is_json_key_present(settings_file,'intermediate_saves'): intermediate_saves = (settings_file['intermediate_saves'])
     except Exception as e:
         print('Failed to open or parse ' + setting_arg + ' - Check formatting.')
         print(e)
@@ -422,6 +423,20 @@ if clip_guidance_scale == 'auto':
         clip_guidance_scale = (((res - mincgsres) * newrange) / resrange) + mincgs
         clip_guidance_scale = round(clip_guidance_scale)
     print(f'clip_guidance_scale set automatically to: {clip_guidance_scale}')
+
+# List of artists for random artist support
+artists = []
+with open('artists.txt',encoding="utf-8") as f:
+    for line in f:
+        artists.append(line.strip())
+
+for prompts in text_prompts["0"]:
+    if "_artist" in prompts:
+        while "_artist_" in prompts:
+            prompts = prompts.replace("_artist_",random.choice(artists),1)
+        text_prompts["0"] = [prompts]
+        print('Replaced _artist_ with random artist(s).')
+        print(f'New prompt is: {text_prompts}')
 
 import torch
 
@@ -868,9 +883,9 @@ def do_run():
 
             model_stat["target_embeds"] = torch.cat(model_stat["target_embeds"])
             model_stat["weights"] = torch.tensor(model_stat["weights"], device=device)
-            if model_stat["weights"].sum().abs() < 1e-3:
-                raise RuntimeError('The weights must not sum to 0.')
-            model_stat["weights"] /= model_stat["weights"].sum().abs()
+            #if model_stat["weights"].sum().abs() < 1e-3:
+            #    raise RuntimeError('The weights must not sum to 0.')
+            model_stat["weights"] /= model_stat["weights"].abs().sum()
             model_stats.append(model_stat)
 
       init = None
@@ -2280,7 +2295,7 @@ else:
 """
 
 #@markdown ####**Saving:**
-intermediate_saves = 0#@param{type: 'raw'}
+#intermediate_saves = 0#@param{type: 'raw'}
 if geninit: intermediate_saves = [(steps * geninitamount)] # Save a checkpoint at 20% for use as a later init image
 intermediates_in_subfolder = True #@param{type: 'boolean'}
 #@markdown Intermediate steps will save a copy at your specified intervals. You can either format it as a single integer or a list of specific steps
