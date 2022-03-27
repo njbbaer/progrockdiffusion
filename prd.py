@@ -277,7 +277,7 @@ def clampval(minval, val, maxval):
 # Load the JSON config files
 for setting_arg in cl_args.settings:
     try:
-        with open(setting_arg,'r') as json_file:
+        with open(setting_arg,'r',encoding="utf-8") as json_file:
             print(f'Parsing {setting_arg}')
             settings_file = json.load(json_file)
             # If any of these around in this settings file they'll be applied, overwriting any previous value.
@@ -1158,7 +1158,7 @@ def save_settings():
     'extract_nth_frame':extract_nth_frame,
   }
   # print('Settings:', setting_list)
-  with open(f"{batchFolder}/{batch_name}({batchNum})_settings.json", "w+") as f:   #save settings
+  with open(f"{batchFolder}/{batch_name}({batchNum})_settings.json", "w+", encoding="utf-8") as f:   #save settings
     json.dump(setting_list, f, ensure_ascii=False, indent=4)
 
 #@title 2.3 Define the secondary diffusion model
