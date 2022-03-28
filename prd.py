@@ -1074,6 +1074,11 @@ def do_run():
                               raise KeyboardInterrupt
 
                       if cur_t == -1:
+                        print('Incrementing seed by one.')
+                        seed = seed + 1
+                        np.random.seed(seed)
+                        random.seed(seed)
+                        torch.manual_seed(seed)
                         if frame_num == 0:
                           save_settings()
                         if args.animation_mode != "None":
