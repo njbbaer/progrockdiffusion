@@ -96,6 +96,7 @@ import timm
 from IPython import display
 import lpips
 from PIL import Image, ImageOps
+from PIL.PngImagePlugin import PngInfo
 import requests
 from glob import glob
 import json
@@ -198,6 +199,7 @@ translation_y = "0: (0)"
 video_init_path = "/content/training.mp4"
 extract_nth_frame = 2
 intermediate_saves = 0
+add_metadata = True
 
 # Command Line parse
 import argparse
@@ -232,6 +234,8 @@ To use a checkpoint image at 20% steps add -u or --useinit:
 To specify which CUDA device to use (advanced) by device ID (default is 0):
  {python_example} prd.py --cuda 1
 
+To HIDE the settings that get added to your output PNG's metadata, use:
+ {python_example} prd.py --hidemetadata
 '''
 
 my_parser = argparse.ArgumentParser(prog='ProgRockDiffusion', description='Generate images from text prompts.', epilog=example_text, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -243,6 +247,7 @@ my_parser.add_argument('-c', '--cpu', type=int, nargs='?', action='store', requi
 my_parser.add_argument('-g', '--geninit', type=int, nargs='?', action='store', required=False, default=False, const=0.2, help='Save a partial image at the specified percent of steps (1 to 99), for use as later init image')
 my_parser.add_argument('-u', '--useinit', action='store_true', required=False, default=False, help='Use the specified init image')
 my_parser.add_argument('--cuda', action='store', required=False, default='0', help='Which GPU to use. Default is 0.')
+my_parser.add_argument('--hidemetadata', action='store_true', required=False, help='Will prevent settings from being added to the output PNG file')
 
 cl_args = my_parser.parse_args()
 
@@ -353,6 +358,10 @@ if cl_args.prompt:
 if cl_args.ignoreseed:
     set_seed = 'random_seed'
     print(f'Using a random seed instead of the one provided by the JSON file.')
+
+if cl_args.hidemetadata:
+    add_metadata = False
+    print(f'Hide metadata flag is ON, settings will not be stored in the PNG output.')
 
 if cl_args.geninit:
     geninit = True
@@ -1043,15 +1052,32 @@ def do_run():
                         #if intermediates are saved to the subfolder, don't append a step or percentage to the name
                         if cur_t == -1 and args.intermediates_in_subfolder is True:
                           save_num = f'{frame_num:04}' if animation_mode != "None" else i
-                          filename = f'{args.batch_name}({args.batchNum})_{save_num}.png'
+                          filename = f'{args.batch_name}_{args.batchNum}_{save_num}.png'
                         else:
                           #If we're working with percentages, append it
                           if args.steps_per_checkpoint is not None:
-                            filename = f'{args.batch_name}({args.batchNum})_{i:04}-{percent:02}%.png'
+                            filename = f'{args.batch_name}_{args.batchNum}_{i:04}-{percent:02}%.png'
                           # Or else, iIf we're working with specific steps, append those
                           else:
-                            filename = f'{args.batch_name}({args.batchNum})_{i:04}-{j:03}.png'
+                            filename = f'{args.batch_name}_{args.batchNum}__{i:04}-{j:03}.png'
                       image = TF.to_pil_image(image.add(1).div(2).clamp(0, 1))
+                      #add some key metadata to the PNG if the commandline allows it
+                      metadata = PngInfo()
+                      if add_metadata == True:
+                          metadata.add_text("prompt", str(text_prompts))
+                          metadata.add_text("seed", str(seed))
+                          metadata.add_text("steps", str(steps))
+                          metadata.add_text("init_image", str(init_image))
+                          metadata.add_text("skip_steps", str(skip_steps))
+                          metadata.add_text("clip_guidance_scale", str(clip_guidance_scale))
+                          metadata.add_text("tv_scale", str(tv_scale))
+                          metadata.add_text("range_scale", str(range_scale))
+                          metadata.add_text("sat_scale", str(sat_scale))
+                          metadata.add_text("eta", str(eta))
+                          metadata.add_text("clamp_max", str(clamp_max))
+                          metadata.add_text("cut_overview", str(cut_overview))
+                          metadata.add_text("cut_innercut", str(cut_innercut))
+                          metadata.add_text("cut_ic_pow", str(cut_ic_pow))
                       if j % args.display_rate == 0 or cur_t == -1:
                         image.save('progress.png')
                         display.clear_output(wait=True)
@@ -1074,11 +1100,6 @@ def do_run():
                               raise KeyboardInterrupt
 
                       if cur_t == -1:
-                        print('Incrementing seed by one.')
-                        seed = seed + 1
-                        np.random.seed(seed)
-                        random.seed(seed)
-                        torch.manual_seed(seed)
                         if frame_num == 0:
                           save_settings()
                         if args.animation_mode != "None":
@@ -1088,7 +1109,12 @@ def do_run():
                           if args.keep_unsharp is True:
                             image.save(f'{unsharpenFolder}/{filename}')
                         else:
-                          image.save(f'{batchFolder}/{filename}')
+                            image.save(f'{batchFolder}/{filename}', pnginfo=metadata)
+                        print('Incrementing seed by one.')
+                        seed = seed + 1
+                        np.random.seed(seed)
+                        random.seed(seed)
+                        torch.manual_seed(seed)
                         # if frame_num != args.max_frames-1:
                         #   display.clear_output()
 
@@ -1163,7 +1189,7 @@ def save_settings():
     'extract_nth_frame':extract_nth_frame,
   }
   # print('Settings:', setting_list)
-  with open(f"{batchFolder}/{batch_name}({batchNum})_settings.json", "w+", encoding="utf-8") as f:   #save settings
+  with open(f"{batchFolder}/{batch_name}_{batchNum}_settings.json", "w+", encoding="utf-8") as f:   #save settings
     json.dump(setting_list, f, ensure_ascii=False, indent=4)
 
 #@title 2.3 Define the secondary diffusion model
