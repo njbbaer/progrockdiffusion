@@ -99,7 +99,6 @@ cd progrockdiffusion
 git clone https://github.com/crowsonkb/guided-diffusion
 git clone https://github.com/openai/CLIP.git
 git clone https://github.com/assafshocher/ResizeRight.git
-git clone https://github.com/facebookresearch/SLIP.git
 git clone https://github.com/CompVis/latent-diffusion.git
 git clone https://github.com/CompVis/taming-transformers
 pip install -e ./CLIP
@@ -185,12 +184,25 @@ Optional arguments:
   -h, --help            show this help message and exit
   -s SETTINGS, --settings SETTINGS
                         A settings JSON file to use, best to put in quotes
+                        Can be specified more than once to layer settings on top of one another
   -o OUTPUT, --output OUTPUT
                         What output directory to use within images_out
   -p PROMPT, --prompt PROMPT
                         Override the prompt
   -i, --ignoreseed
                         Use a random seed instead of what is in your settings file
+
+  -c, --cpu CORES
+                        Force CPU mode, and (optionally) specify how many threads to run.
+
+  --cuda DEVICE-ID
+                        Specify which CUDA device ID to use for rendering (default: 0).
+
+  -g PERCENT, --geninit PERCENT:
+                        Will save an image called geninit.png at PERCENT of overall steps, for use with --useinit
+
+  -u, --useinit:
+                        Forces use of geninit.png as an init_image starting at 20% of defined steps.
 
 Usage examples:
 
@@ -199,6 +211,9 @@ To use the Default output directory and settings from settings.json:
 
 To use your own settings.json file (note that putting it in quotes can help parse errors):
  python3 prd.py -s "some_directory/mysettings.json"
+
+Note that multiple settings files are allowed. They're parsed in order. The values present are applied over any previous value:
+ python3 prd.py -s "some_directory/mysettings.json" -s "highres.json"
 
 To quickly just override the output directory name and the prompt:
  python3 prd.py -p "A cool image of the author of this program" -o Coolguy
@@ -209,15 +224,34 @@ Multiple prompts with weight values are supported:
 You can ignore the seed coming from a settings file by adding -i, resulting in a new random seed
 
 To force use of the CPU for image generation, add a -c or --cpu (warning: VERY slow):
- {python_example} prd.py -c
+ python3 prd.py -c
+
+To specify which CUDA device to use (advanced) by device ID (default is 0):
+ python3 prd.py --cuda 1
+
 ```
-Simply edit the settings.json file provided, or copy it and make several that include your favorite settings, if you wish to tweak the defaults.
+Simply edit the settings.json file provided, or BETTER YET copy it and make several that include your favorite settings.
+*Note that multiple settings files can be specified in your command*, and they'll be loaded in order.
+Settings.json is **always loaded**, and any specified after that are layered on top (they only need to contain the settings you want to tweak).
+For example you could have a settings file that just contains a higher width, height, and more steps, for when you want to make a high-quality image.
+Layer that on top of your regular settings and it will apply those values without changing anything else.
 
 # Tips and Troubleshooting
+## Get a random artist
+In your prompt, if you use \_artist\_ instead of an artists name, an artist will be picked at random from artists.txt
+
 ## If you get an error about pandas needing a different verison of numpy, you can try:
 ```
 pip install --force-reinstall numpy
 ```
+## If you are getting "OMP: Error #15: Initializing libiomp5md.dll, but found libiomp5md.dll already initialized"
+This seems to be because of a Pytorch compiling bug for Intel CPUs.
+You can set an environment variable that will fix this, either on your machine (if you know how to do that), or by editing prd.py.
+To do it by editing prd.py, find the line that says "import os" and add the following right below it:
+```
+os.environ['KMP_DUPLICATE_LIB_OK']='True'
+```
+
 ## Switch between GPU and CPU modes
 Let's assume you installed the GPU version. You can adjust these instructions if you did CPU first, of course.
 Clone your existing conda environment:

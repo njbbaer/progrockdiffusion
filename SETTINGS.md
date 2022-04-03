@@ -1,5 +1,6 @@
 # What do all the settings do?
 This document hopes to explain what the various settings are. Some of them we're still figuring out. :)
+Note that a few of the settings can be randomly chosen -- see the section below for details.
 
 | *Setting name* | *Default in settings.json* | *Explanation*
 | -------------------------|------------------------|:---
@@ -37,15 +38,15 @@ This document hopes to explain what the various settings are. Some of them we're
 | **diffusion_model** | "512x512_diffusion_uncond_finetune_008100",
 | **use_secondary_model** | true | Reduces memory and improves speed, potentially at a loss of quality
 | **diffusion_steps** | 1000 | Note: The code seems to calculate this no matter what you put in, so might as well leave it
-| **ViTB32** | false | Enable or disable the VitB32 CLIP model. Low memory, low accuracy
+| **sampling_mode** | "plms"  | Options are "plms" or "ddim" - plms can reach a nice image in fewer steps, but may not look as good as ddim.
+| **ViTB32** | true | Enable or disable the VitB32 CLIP model. Low memory, low accuracy
 | **ViTB16** | true | Enable or disable the VitB16 CLIP model. Med memory, high accuracy
 | **ViTL14** | false | Enable or disable the VitB32 CLIP model. Very high memory, very high accuracy
 | **RN101** | false | Enable or disable the VitB32 CLIP model. Low memory, low accuracy
 | **RN50** | true | Enable or disable the VitB32 CLIP model. Med memory, med accuracy
 | **RN50x4** | false | Enable or disable the VitB32 CLIP model. High memory, high accuracy
 | **RN50x16** | false | Enable or disable the VitB32 CLIP model. Very high memory, high accuracy
-| **SLIPB16** | false | Enable or disable the SLIPB16 CLIP model. High memory, weird accuracy
-| **SLIPL16** | false | Enable or disable the SLIPL16 CLIP model. Very high memory, unknown accuracy
+| **RN50x64** | false | Enable or disable the VitB32 CLIP model. Extremely high memory, unknown accuracy
 | **cut_overview** | "[12]\*400+[4]\*600" | How many "big picture" passes to do. More towards the start, less later, is the general idea
 | **cut_innercut** | "[4]\*400+[12]\*600" | Conversely, how many detail passes to do. Fewer at the start, then get more detailed
 | **cut_ic_pow** | 1 | Anyone? Beuller?
@@ -57,3 +58,16 @@ This document hopes to explain what the various settings are. Some of them we're
 | **translation_y** | "0: (0)" | Animation stuff...
 | **video_init_path** | "/content/training.mp4"| Animation stuff...
 | **extract_nth_frame** | 2 | Animation stuff...
+| **intermediate_saves**   | 0  | Save in progress. A value of `2` will save a copy at 33% and 66%. 0 will save none. A value of `[5, 9, 34, 45]` will save at steps 5, 9, 34, and 45. (Make sure to include the brackets)
+
+## Randomizable settings
+The following settings can be set to "random" (with the quotes), which will tell the code to pick a random value within their expected boundaries:
+
+**clip_guidance_scale**
+**tv_scale**
+**range_scale**
+**sat_scale**
+**clamp_max**
+**rand_mag**
+**eta**
+**cut_ic_pow**
